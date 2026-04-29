@@ -117,6 +117,34 @@
 	else
 		return chargetime 
 
+//CELEBRATORY FIRING//
+
+/obj/item/gun/ballistic/rifle/rmb_self(mob/living/user)
+    celebration_fire(user)
+    return
+
+/obj/item/gun/ballistic/rifle/proc/celebration_fire(mob/living/user)
+    if(!can_shoot())
+        playsound(user, dry_fire_sound, 50, TRUE)
+        return
+
+    process_chamber(TRUE, TRUE, TRUE)
+
+    playsound(user, fire_sound, 100, TRUE)
+
+    user.visible_message(
+        "<span class='notice'>[user] fires [src] into the air!</span>",
+        "<span class='notice'>You fire [src] into the air!</span>"
+    )
+
+    var/turf/T = get_turf(user)
+    if(T)
+        new /obj/effect/temp_visual/muzzle_flash(T)
+
+    return TRUE
+
+//////////////////////////
+
 /datum/intent/arc/rifle
 	chargetime = 1
 	chargedrain = 0
