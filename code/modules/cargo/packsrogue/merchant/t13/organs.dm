@@ -30,7 +30,7 @@
 
 /datum/supply_pack/rogue/organs/reviver
 	name = "REVIVER"
-	cost = 30
+	cost = 10
 	contains = list(/obj/item/reagent_containers/lux)
 
 /datum/supply_pack/rogue/organs/health

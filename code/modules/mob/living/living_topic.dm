@@ -34,6 +34,19 @@
 				message += span_deadsay("[p_they(TRUE)] [p_are()] still earthbound.")
 	return message
 
+/mob/living/proc/soul_examine_temperance(mob/user)
+	var/list/message = list()
+	if((stat >= DEAD || HAS_TRAIT(src, TRAIT_FAKEDEATH) || HAS_TRAIT(src, TRAIT_ROTMAN)) && get_bodypart("head"))
+		if(suiciding)
+			message += "<span class='deadsay'>[p_they(TRUE)] killed themselves, dumbass.</span>"
+		if(!key && !get_ghost(FALSE, TRUE))
+			message += span_deadsay("[p_they(TRUE)] [p_are()] a goner. Might as well throw 'em out.")
+		else
+			message += span_deadsay("[p_they(TRUE)] can be worked on.")
+		if(key && !client)
+			message += span_deadsay("[p_they(TRUE)] might not pull through.")
+	return message
+
 //Vrell - Moved this here
 /mob/living/proc/has_penis()
 	return gender == MALE

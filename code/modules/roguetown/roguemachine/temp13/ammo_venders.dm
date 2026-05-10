@@ -18,7 +18,7 @@
 	is_public = TRUE
 	locked = FALSE
 	categories = list(
-		"FORTIFICATIONS",
+		"IMPERIAL FORTIFICATIONS",
 		"GRENADES",
 	)
 	categories_gamer = list()
@@ -37,6 +37,7 @@
 		"Armor (Light)",
 		"FORTIFICATIONS",
 		"FIREARMS",
+		"MEDICINE"
 	)
 	categories_gamer = list()
 	icon_state = "ammovend_s"

@@ -42,6 +42,10 @@
 			if(150 to INFINITY)
 				to_chat(user, span_necrosis("The body is devastated by toxicity."))
 		
+		var/list/soul_msg = human_target.soul_examine_temperance(user)
+		for(var/msg in soul_msg)
+			to_chat(user, msg)
+
 		return TRUE
 	revert_cast()
 	return FALSE

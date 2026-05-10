@@ -104,6 +104,14 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Heavy Hood"
 	path = /obj/item/clothing/head/roguetown/roguehood/shalal/heavyhood
 
+/datum/loadout_item/sackhood
+    name = "Sackhood"
+    path = /obj/item/clothing/head/roguetown/menacing/
+
+/datum/loadout_item/bandithood
+	name = "Bandit Sackhood"
+	path = /obj/item/clothing/head/roguetown/menacing/bandit
+
 /datum/loadout_item/nunveil
 	name = "Nun Veil"
 	path = /obj/item/clothing/head/roguetown/nun
@@ -129,6 +137,10 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Cape"
 	path = /obj/item/clothing/cloak/cape
 
+/datum/loadout_item/shortcloak
+	name = "Shortcloak"
+	path = /obj/item/clothing/cloak/forrestercloak/snow
+
 /datum/loadout_item/halfcloak
 	name = "Halfcloak"
 	path = /obj/item/clothing/cloak/half
@@ -145,6 +157,9 @@ GLOBAL_LIST_EMPTY(loadout_items)
 	name = "Rapscallion's Shawl"
 	path = /obj/item/clothing/cloak/thief_cloak
 
+/datum/loadout_item/longcoat
+	name = "Longcoat"
+	path = /obj/item/clothing/suit/roguetown/armor/longcoat
 //SHOES
 /datum/loadout_item/darkboots
 	name = "Dark Boots"
@@ -387,6 +402,10 @@ GLOBAL_LIST_EMPTY(loadout_items)
 /datum/loadout_item/cloth_blindfold
 	name = "Cloth Blindfold"
 	path = /obj/item/clothing/mask/rogue/blindfold
+
+/datum/loadout_item/fake_blindfold
+	name = "Fake Blindfold"
+	path = /obj/item/clothing/mask/rogue/blindfold/fake
 
 /datum/loadout_item/wedding_band
 	name = "silver wedding band"

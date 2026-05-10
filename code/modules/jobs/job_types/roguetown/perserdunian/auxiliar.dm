@@ -53,13 +53,12 @@
 	backr = /obj/item/storage/backpack/rogue/backpack/perserdun
 	backpack_contents = list(
 		/obj/item/reagent_containers/glass/bottle/rogue/healthpotnew = 3,
-		/obj/item/ammo_box/handfuls/rifle = 6,
+		/obj/item/storage/belt/rogue/pouch/ammobag/rifle,
 		/obj/item/storage/belt/rogue/pouch/coins/poor,
 		/obj/item/grenade/gas/poison = 2,
 		/obj/item/natural/cloth,
 		/obj/item/rogueweapon/sword/iron/short,
 		/obj/item/rope,
-		/obj/item/storage/belt/rogue/surgery_bag,
 	)
 	H.adjust_skillrank(/datum/skill/misc/medicine, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)

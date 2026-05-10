@@ -1,3 +1,7 @@
+body {
+	color: #878d74;
+}
+
 .column {
     float: left;
     flex-wrap: wrap;
@@ -44,44 +48,19 @@
     text-align: center;
 }
 
-.nobles {
-    background-color: #aa83b9;
-    color: #443a39;
+.kingsrow {
+    background-color: #171717;
+    color: #7f7e9f;
 }
 
-.courtier {
-    background-color: #81adc8;
-    color: #443a39;
+.risvon {
+    background-color: #681f13;
+    color: #9f9987;
 }
 
-.church {
-    background-color: #c0ba8d;
-    color: #443a39;
-}
-
-.garrison {
-    background-color: #b18484;
-    color: #443a39;
-}
-
-.yeomen {
-    background-color: #819e82;
-    color: #443a39;
-}
-
-.peasants {
-    background-color: #b09262;
-    color: #443a39;
-}
-
-.mercenaries {
-    background-color: #c86e3a;
-    color: #443a39;
-}
-
-.youngfolk {
-    background-color: #ffc0cb;
-    color: #443a39;
+.perserdun {
+    background-color: #394051;
+    color: #90949b;
 }
 
 .abstract {

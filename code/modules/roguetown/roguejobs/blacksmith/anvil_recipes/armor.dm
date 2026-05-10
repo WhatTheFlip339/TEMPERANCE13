@@ -256,6 +256,8 @@
 	req_bar = /obj/item/ingot/iron
 	created_item = /obj/item/clothing/neck/roguetown/bevor/iron
 
+/*
+
 /datum/anvil_recipe/armor/iron/breastplate
 	name = "Breastplate (+1 Iron)"
 	req_bar = /obj/item/ingot/iron
@@ -269,12 +271,14 @@
 	created_item = /obj/item/clothing/suit/roguetown/armor/plate/iron
 	craftdiff = 2
 
+
 /datum/anvil_recipe/armor/iron/fullplate
 	name = "Full-Plate Armour (+3 Iron, +1 Cured Leather)"
 	req_bar = /obj/item/ingot/iron
 	additional_items = list(/obj/item/ingot/iron, /obj/item/ingot/iron, /obj/item/ingot/iron, /obj/item/natural/hide/cured)
 	created_item = /obj/item/clothing/suit/roguetown/armor/plate/full/iron
 	craftdiff = 3
+*/
 
 /datum/anvil_recipe/armor/iron/chainglove
 	name = "Chain Gauntlets"
@@ -428,6 +432,8 @@
 */
 // --------- STEEL RECIPES -----------
 
+/*
+
 /datum/anvil_recipe/armor/steel/lbrigandine
 	name = "Light Brigandine (+1 cured leather)"
 	req_bar = /obj/item/ingot/steel
@@ -510,6 +516,8 @@
 	additional_items = list(/obj/item/ingot/steel, /obj/item/natural/hide/cured)
 	created_item = /obj/item/clothing/suit/roguetown/armor/plate/bikini
 	craftdiff = 3
+
+*/
 
 /datum/anvil_recipe/armor/steel/fullplatebikini
 	name = "Full-Plate Corslet (+2 Steel, +1 Cured Leather)"
@@ -622,12 +630,14 @@
 	created_item = /obj/item/clothing/suit/roguetown/armor/plate/half/fluted
 	craftdiff = 3
 
+/*
 /datum/anvil_recipe/armor/steel/cuirass/fluted/ornate
 	name = "Psydonian Cuirass (+1 Blessed Silver)"
 	req_bar = /obj/item/ingot/steel
 	additional_items = list(/obj/item/ingot/silverblessed)
 	created_item = /obj/item/clothing/suit/roguetown/armor/plate/half/fluted/ornate
 	craftdiff = 3
+*/
 
 /datum/anvil_recipe/armor/steel/scalemail
 	name = "Scalemail (+1 Steel)"

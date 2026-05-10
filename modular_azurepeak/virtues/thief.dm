@@ -5,3 +5,5 @@
 							"Satchel #2" = /obj/item/storage/backpack/rogue/satchel/mule,
 							"Dagger" = /obj/item/rogueweapon/huntingknife/idagger
 	)
+
+//dont tick this unless you're trying to add something other than dust runner

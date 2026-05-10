@@ -1,5 +1,6 @@
 /obj/item/grenade
-	name = "Grenmade"
+	// Pretty sure this is a test item of some kind. We shouldn't ever make reference to this. Ever.
+	name = "Grenade"
 	icon = 'icons/roguetown/items/misc.dmi'
 	w_class = WEIGHT_CLASS_NORMAL
 	//dropshrink = 0

@@ -24,10 +24,12 @@ map dun_world
 endmap
 
 map temperance
+endmap
+
+map kingsworld
 	default
 	votable
 endmap
 
-map kingsworld
-	votable
+map twoforts
 endmap

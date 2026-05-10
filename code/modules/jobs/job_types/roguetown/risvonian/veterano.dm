@@ -3,15 +3,15 @@
 	flag = VETERANO
 	department_flag = RISVON
 	faction = "Station"
-	total_positions = 2
-	spawn_positions = 2
+	total_positions = 3
+	spawn_positions = 3
 	allowed_races = RACES_CONSCRIPT
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_ages = list(AGE_ADULT, AGE_MIDDLEAGED)
 
 	tutorial = "You're Risvonian Squad Support. \
 				You're supposed to obey the orders of the Oficiro and Commandant, while working with your squadron. \
-				Ideally, you're supposed to keep your Soldati alive, while whatever your higher-ups define as 'The Enemy'. \
+				Ideally, you're supposed to keep your Soldati alive, while killing whatever your higher-ups define as 'The Enemy'. \
 				Veteranos are typically promoted from Soldati, based off of their combat and leadership prowess." 
 
 	outfit = /datum/outfit/job/roguetown/veterano
@@ -37,9 +37,9 @@
 
 /datum/outfit/job/roguetown/veterano/pre_equip(mob/living/carbon/human/H)
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/armor/rishighboots
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/iron/ziggurate
-	cloak = /obj/item/clothing/cloak/templar/malumite
+	cloak = /obj/item/clothing/cloak/risofficer
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants
 	head = /obj/item/clothing/head/roguetown/helmet/kettle/iron/visored
 	mask = /obj/item/clothing/mask/rogue/gasmask/risvonmask
@@ -72,10 +72,6 @@
 	H.adjust_skillrank(/datum/skill/combat/shotguns, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/armorsmithing, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/sewing, 3, TRUE)
-	if(H.mind)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/risholdingweak)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/risaimweak)
-		H.mind.AddSpell(new /obj/effect/proc_holder/spell/invoked/rischargeweak)
 	H.change_stat("strength", 1)
 	H.change_stat("constitution", 1)
 	H.change_stat("endurance", 1)

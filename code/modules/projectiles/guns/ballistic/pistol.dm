@@ -21,7 +21,6 @@
 	icon = 'icons/roguetown/weapons/32guns.dmi'
 	possible_item_intents = list(
 		/datum/intent/shoot/pistol,
-		/datum/intent/arc/pistol,
 		INTENT_GENERIC,
 		)
 /datum/intent/shoot/pistol
@@ -142,6 +141,7 @@
 	semi_auto = TRUE
 	slot_flags = ITEM_SLOT_HIP
 	sellprice = 70
+	longarm = FALSE
 
 /obj/item/gun/ballistic/rifle/repeater/broomhandle
 	name = "KR 'Trenchsweeper'"
@@ -238,6 +238,7 @@
 	semi_auto = TRUE
 	slot_flags = ITEM_SLOT_HIP
 	sellprice = 20 //assume people are going to be selling these empty
+	longarm = FALSE
 
 /obj/item/gun/ballistic/rifle/repeater/mpcolt
 	name = "MP 'Certain Fury'"

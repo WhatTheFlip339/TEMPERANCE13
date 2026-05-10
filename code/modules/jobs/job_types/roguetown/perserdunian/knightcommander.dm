@@ -41,7 +41,7 @@
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/hauberk
 	cloak = /obj/item/clothing/cloak/perserduntabard
 	pants = /obj/item/clothing/under/roguetown/trou/artipants
-	head = /obj/item/clothing/head/roguetown/helmet/heavy/knight/iron
+	head = /obj/item/clothing/head/roguetown/helmet/heavy/barbute/visor
 	mask = /obj/item/clothing/mask/rogue/gasmask/perserdunmask
 	belt = /obj/item/storage/belt/rogue/leather/black/soldier
 	beltl = /obj/item/flashlight/flare/torch/lantern

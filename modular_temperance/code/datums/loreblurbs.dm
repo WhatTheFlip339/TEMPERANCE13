@@ -93,7 +93,7 @@ Just because it'd get a LITTLE annoying if you kept seeing this over and over. H
 /datum/loreblurb/bastillexiphos
 	title = "BASTILLE XIPHOS"
 	description = "A bastille is a temporary encampment belonging to a Risvonian brigade. \n\
-	Officially, both the Rostrum and Bastille belong the 5th Caprito (or Chapter) of Dominion. \n\
+	Officially, both the Rostrum and Bastille belong the Fourth Forward Battalion. \n\
 	Though, the Chapter's been divided into two brigades that transfer personnel to-and-from the Bastille about every week or so. \n\
 	The actual bastille's made out of tents and metal walls similar to a siege camp. Travel time is about an hour for a round-trip on foot."
 

@@ -3,8 +3,8 @@
 	flag = ARMSMAN
 	department_flag = PERSERDUN
 	faction = "Station"
-	total_positions = 8
-	spawn_positions = 8
+	total_positions = 16
+	spawn_positions = 16
 	allowed_races = RACES_CONSCRIPT
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_ages = list(AGE_ADULT, AGE_MIDDLEAGED)

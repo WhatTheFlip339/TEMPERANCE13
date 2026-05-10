@@ -24,7 +24,6 @@
 	spawnwithmagazine = TRUE
 	possible_item_intents = list(
 		/datum/intent/shoot/shotgun,
-		/datum/intent/arc/shotgun,
 		INTENT_GENERIC,
 		)
 	can_parry = TRUE

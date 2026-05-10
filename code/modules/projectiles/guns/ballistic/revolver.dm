@@ -20,7 +20,6 @@
 	icon = 'icons/roguetown/weapons/32guns.dmi'
 	possible_item_intents = list(
 		/datum/intent/shoot/revolver,
-		/datum/intent/arc/revolver,
 		INTENT_GENERIC,
 		)
 

@@ -552,3 +552,7 @@
 /obj/structure/fluff/walldeco/vent/vent3
 	desc = "It's broken."
 	icon_state = "vent3"
+
+/obj/structure/fluff/walldeco/rivbattleflag
+	desc = "The unit insignia of the Fourth Forward Battalion in King's Row. A grinning maw of steel stares back at you."
+	icon_state = "rivbattleflag"

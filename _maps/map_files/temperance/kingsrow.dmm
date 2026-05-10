@@ -3033,6 +3033,10 @@
 	},
 /turf/open/floor/rogue/med,
 /area/rogue/indoors/shelter/town)
+"td" = (
+/obj/structure/roguemachine/vendor/merchant,
+/turf/closed/wall/mineral/rogue/kingsrow,
+/area/rogue/indoors/shelter/town)
 "tn" = (
 /turf/open/floor/rogue/dirt/road,
 /area/rogue/outdoors/beach/forest/south)
@@ -73111,6 +73115,7 @@ Cd
 Rt
 aT
 aT
+td
 aT
 aT
 yu

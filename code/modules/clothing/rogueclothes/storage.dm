@@ -638,6 +638,7 @@
 	desc = "An expensive piece of equipment that connects straight to AS-Y14 through the use of radio waves."
 	icon_state = "radiopack"
 	item_state = "radiopack"
+	resistance_flags = FIRE_PROOF
 	var/list/radiostatic_sounds = list('sound/foley/radiostatic/badopera.ogg', 'sound/foley/radiostatic/beep.ogg', 'sound/foley/radiostatic/ditditdit.ogg', 'sound/foley/radiostatic/hangup.ogg', 'sound/foley/radiostatic/malechatter.ogg', 'sound/foley/radiostatic/roger.ogg', 'sound/foley/radiostatic/standby.ogg', 'sound/foley/radiostatic/thinking.ogg')
 
 /obj/item/storage/backpack/rogue/satchel/radiopack/Initialize()
