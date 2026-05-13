@@ -1929,6 +1929,7 @@
 #include "code\modules\mob\living\carbon\human\species_types\wildshape\wildshape_transformation.dm"
 #include "code\modules\mob\living\carbon\human\voicepacks\genfemale.dm"
 #include "code\modules\mob\living\carbon\human\voicepacks\genmale.dm"
+#include "code\modules\mob\living\carbon\human\voicepacks\female\dainty.dm"
 #include "code\modules\mob\living\carbon\human\voicepacks\female\dwarf.dm"
 #include "code\modules\mob\living\carbon\human\voicepacks\female\elf.dm"
 #include "code\modules\mob\living\carbon\human\voicepacks\female\goblin.dm"
