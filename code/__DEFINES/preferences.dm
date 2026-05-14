@@ -149,6 +149,7 @@ GLOBAL_LIST_INIT(voice_types_list, list(VOICE_TYPE_MASC, VOICE_TYPE_FEM, VOICE_T
 #define VOICE_PACK_WARRIOR "Warrior (Masc)"
 #define VOICE_PACK_FEM	"Feminine"
 #define VOICE_PACK_FEM_DAINTY "Dainty (Fem)"
+#define VOICE_PACK_FEM_HAUGHTY "Haughty (Fem)"
 #define VOICE_PACK_FEM_ELF	"Elvish (Fem)"
 #define VOICE_PACK_FEM_DWARF "Dwarvish (Fem)"
 
