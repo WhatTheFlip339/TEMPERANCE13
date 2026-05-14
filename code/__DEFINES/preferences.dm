@@ -160,4 +160,5 @@ GLOBAL_LIST_INIT(voice_packs_list, list(
 	VOICE_PACK_WARRIOR = /datum/voicepack/male/warrior,
 	VOICE_PACK_FEM = /datum/voicepack/female,
 	VOICE_PACK_FEM_DAINTY = /datum/voicepack/female/dainty,
+	VOICE_PACK_FEM_HAUGHTY = /datum/voicepack/female/haughty,
 ))
