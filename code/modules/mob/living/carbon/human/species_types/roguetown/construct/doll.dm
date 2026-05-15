@@ -13,7 +13,7 @@
 	can be meek & timid, stammering their way along. They tend to be incredibly fragile, often missing chunks\
 	of plastic that expose their inner workings. They're usually recovered and reactivated by the nations, \
 	although some have crawled out of the Machines by their own.\
-	(-2 Strength, +2 Intelligence, +1 Speed, Hungerless, Insomnia, Bloodless. Extremely fragile.)"
+	(-2 Strength, +2 Intelligence, +1 Speed, Hungerless, Insomnia, Virus Immune, Bloodless. Extremely fragile.)"
 
 
 	construct = 1
@@ -27,7 +27,7 @@
 	disliked_food = NONE
 	liked_food = NONE
 	inherent_traits = list(TRAIT_NOHUNGER, TRAIT_BLOODLOSS_IMMUNE, TRAIT_NOBREATH, TRAIT_CRITICAL_WEAKNESS,
-	TRAIT_BEAUTIFUL, TRAIT_EASYDISMEMBER, TRAIT_LIMBATTACHMENT, TRAIT_NOMETABOLISM, TRAIT_NOPAIN, TRAIT_ZOMBIE_IMMUNE)
+	TRAIT_BEAUTIFUL, TRAIT_EASYDISMEMBER, TRAIT_LIMBATTACHMENT, TRAIT_NOMETABOLISM, TRAIT_NOPAIN, TRAIT_ZOMBIE_IMMUNE, TRAIT_VIRUSIMMUNE)
 	changesource_flags = MIRROR_BADMIN | WABBAJACK | MIRROR_MAGIC | MIRROR_PRIDE | RACE_SWAP | SLIME_EXTRACT
 	limbs_icon_m = 'icons/roguetown/mob/bodies/m/mcom.dmi'
 	limbs_icon_f = 'icons/roguetown/mob/bodies/f/fcom.dmi'
