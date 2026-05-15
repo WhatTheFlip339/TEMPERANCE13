@@ -43,6 +43,7 @@
 	var/timeofdeath = 0
 
 	var/infected = FALSE //Used to tell if the mob is in progress of turning into deadite
+	var/list/diseases = list()
 
 	//Allows mobs to move through dense areas without restriction. For instance, in space or out of holder objects.
 	var/incorporeal_move = FALSE //FALSE is off, INCORPOREAL_MOVE_BASIC is normal, INCORPOREAL_MOVE_SHADOW is for ninjas
