@@ -4,7 +4,6 @@
 /mob/living/carbon/human
 	var/datum/table_crawl_controller/table_crawl
 
-
 //------------------------------------------------------------
 // CONTROLLER
 //------------------------------------------------------------
@@ -27,8 +26,7 @@
 /datum/table_crawl_controller/proc/get_table(atom/location)
 	var/turf/T = get_turf(location)
 	if(!T) return null
-	for(var/obj/structure/table/X in T)
-		return X
+	return (locate(/obj/structure/table) in T)
 
 
 //------------------------------------------------------------
@@ -37,6 +35,7 @@
 /datum/table_crawl_controller/proc/can_crawl()
 	var/mob/living/carbon/human/M = owner
 
+	if(!M) return FALSE
 	if(M.buckled) return FALSE
 	if(M.mobility_flags & MOBILITY_STAND) return FALSE
 	if(M.m_intent != MOVE_INTENT_SNEAK) return FALSE
@@ -54,31 +53,6 @@
 
 
 //------------------------------------------------------------
-// SAFE PASS CHECK (NO DENSITY MUTATION)
-//------------------------------------------------------------
-/datum/table_crawl_controller/proc/can_virtual(obj/structure/table/T, turf/target)
-	var/mob/living/carbon/human/M = owner
-	var/turf/S = get_turf(M)
-
-	if(!S || !target || S == target)
-		return FALSE
-
-	if(S.LinkBlockedWithAccess(target, M, null))
-		return FALSE
-
-	if(!target.CanPass(M, target))
-		return FALSE
-
-	for(var/atom/movable/A as anything in target)
-		if(A == M || A == T)
-			continue
-		if(!A.CanPass(M, S))
-			return FALSE
-
-	return TRUE
-
-
-//------------------------------------------------------------
 // ENTRY CHECK
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/can_finish(obj/structure/table/T, turf/target)
@@ -93,13 +67,7 @@
 	if(get_table(M.loc))
 		return FALSE
 
-	if(get_turf(T) != target)
-		return FALSE
-
-	if(get_dist(M, T) != 1)
-		return FALSE
-
-	if(!can_virtual(T, target))
+	if(!Adjacent(T))
 		return FALSE
 
 	return TRUE
@@ -108,15 +76,15 @@
 //------------------------------------------------------------
 // ENTRY FLOW
 //------------------------------------------------------------
-/datum/table_crawl_controller/proc/try_enter(obj/structure/table/T, turf/target)
+/datum/table_crawl_controller/proc/try_enter(obj/structure/table/T)
 	if(state != TABLECRAWL_NONE)
 		return
 
+	var/turf/target = get_turf(T)
 	if(!can_finish(T, target))
 		return
 
 	state = TABLECRAWL_ATTEMPTING
-
 	INVOKE_ASYNC(src, PROC_REF(begin_enter), T, target)
 
 
@@ -149,28 +117,25 @@
 
 	state = TABLECRAWL_PENDING
 
-	// --------------------------------------------------------
-	// FIX: RELIABLE MOVEMENT (NO step(), NO signal dependency)
-	// --------------------------------------------------------
-	var/turf/next = get_step(M, get_dir(M, target))
-
-	if(!next)
-		state = TABLECRAWL_NONE
-		return
-
-	if(!M.Move(next))
-		state = TABLECRAWL_NONE
-		return
+	// ✔ REAL movement into tile context
+	step_towards(M, T)
 
 
 //------------------------------------------------------------
-// FINALIZE ENTRY (THIS MUST FIRE VIA MOVED SIGNAL)
+// FINALIZE ENTRY (FIXED RELIABLE DETECTION)
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/on_moved()
 	var/mob/living/carbon/human/M = owner
 
-	if(state == TABLECRAWL_PENDING && get_table(M))
+	if(state != TABLECRAWL_PENDING)
+		return
+
+	var/obj/structure/table/T = get_table(M.loc)
+
+	if(T)
 		state = TABLECRAWL_UNDER
+	else
+		state = TABLECRAWL_NONE
 
 	refresh()
 
@@ -184,7 +149,7 @@
 	var/atom/S = T ? T : M
 
 	M.visible_message(
-		span_warning("[M] bumps their head on [T ? "[T]" : "the table"]!"),
+		span_warning("[M] bumps their head on [T ? T : "the table"]!"),
 		span_warning("You bump your head!")
 	)
 
@@ -233,7 +198,7 @@
 		return
 
 	if(state == TABLECRAWL_UNDER)
-		if(!can_remain() || !get_table(M))
+		if(!can_remain() || !get_table(M.loc))
 			state = TABLECRAWL_NONE
 			clear_visual()
 			return
@@ -283,4 +248,4 @@
 	if(!istype(A, /obj/structure/table))
 		return
 
-	H.table_crawl?.try_enter(A, get_turf(A))
+	H.table_crawl?.try_enter(A)
