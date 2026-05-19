@@ -100,6 +100,13 @@
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
 	M.Immobilize(TABLE_CRAWL_BONK_STUN)
 
+/datum/table_crawl_controller/proc/try_bonk()
+	if(world.time < next_bonk)
+		return FALSE
+
+	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
+	head_bonk()
+
 // VISUALS
 /datum/table_crawl_controller/proc/apply_visual()
 	var/mob/living/carbon/human/M = owner
@@ -146,10 +153,7 @@
 
 /mob/living/carbon/human/stand_up()
 	if(table_crawl?.state == TABLECRAWL_UNDER)
-		if(world.time >= table_crawl.next_bonk)
-			table_crawl.next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
-			table_crawl.head_bonk()
-
+		table_crawl.try_bonk()
 		return FALSE
 
 	return ..()
