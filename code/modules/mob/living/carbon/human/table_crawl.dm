@@ -1,11 +1,9 @@
-//------------------------------------------------------------
 // MOB VAR
 //------------------------------------------------------------
 /mob/living/carbon/human
 	var/datum/table_crawl_controller/table_crawl
 
 
-//------------------------------------------------------------
 // CONTROLLER
 //------------------------------------------------------------
 /datum/table_crawl_controller
@@ -17,7 +15,6 @@
 	owner = M
 
 
-//------------------------------------------------------------
 // HELPERS
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/get_table(atom/location)
@@ -28,7 +25,6 @@
 		return X
 
 
-//------------------------------------------------------------
 // VALIDATION
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/can_crawl()
@@ -46,7 +42,6 @@
 	return can_crawl() && owner.resting
 
 
-//------------------------------------------------------------
 // ENTRY VALIDATION (FIXED: NO Adjacent, uses dist)
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/can_finish(obj/structure/table/T, turf/target)
@@ -71,7 +66,6 @@
 	return TRUE
 
 
-//------------------------------------------------------------
 // ENTRY TRIGGER (THIS is what starts everything)
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/try_enter(obj/structure/table/T, turf/target)
@@ -114,7 +108,6 @@
 		state = TABLECRAWL_NONE
 		return
 
-	// ----------------------------------------------------
 	// FORCE ENTRY (reliable, no signal dependency issues)
 	// ----------------------------------------------------
 	M.forceMove(target)
@@ -123,7 +116,6 @@
 	refresh()
 
 
-//------------------------------------------------------------
 // BONK SYSTEM
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/head_bonk()
@@ -153,7 +145,6 @@
 	return TRUE
 
 
-//------------------------------------------------------------
 // VISUALS
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/apply_visual()
@@ -170,7 +161,6 @@
 	M.plane = initial(M.plane)
 
 
-//------------------------------------------------------------
 // REFRESH (STATE MACHINE)
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/refresh()
@@ -189,23 +179,26 @@
 		apply_visual()
 
 
-//------------------------------------------------------------
-// MOB HOOK (IMPORTANT)
+// MOB HOOK
 //------------------------------------------------------------
 /mob/living/carbon/human/set_resting(rest, silent = TRUE)
 	. = ..()
 
+	if(!table_crawl)
+		table_crawl = new(src)
+	if(!rest && table_crawl?.state == TABLECRAWL_UNDER)
+		table_crawl.try_bonk()
 	if(resting)
-		if(!table_crawl)
-			table_crawl = new(src)
-
 		AddElement(/datum/element/table_crawl)
-
 	table_crawl?.refresh()
 
+/mob/living/carbon/human/stand_up()
+	if(table_crawl)
+		table_crawl.try_bonk()
 
-//------------------------------------------------------------
-// ELEMENT (THIS is what actually triggers entry)
+	. = ..()
+
+// ELEMENT triggers entry
 //------------------------------------------------------------
 /datum/element/table_crawl
 	element_flags = ELEMENT_DETACH
