@@ -134,6 +134,18 @@
 	refresh()
 
 // BONK SYSTEM
+/datum/table_crawl_controller/proc/try_bonk()
+	if(state != TABLECRAWL_UNDER)
+		return FALSE
+
+	if(world.time < next_bonk)
+		return FALSE
+
+	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
+	head_bonk()
+
+	return TRUE
+
 /datum/table_crawl_controller/proc/head_bonk()
 	var/mob/living/carbon/human/M = owner
 	var/obj/structure/table/T = get_table(M)
@@ -146,18 +158,6 @@
 
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
 	M.Stun(20)
-
-/datum/table_crawl_controller/proc/try_bonk()
-	if(state != TABLECRAWL_UNDER)
-		return FALSE
-
-	if(world.time < next_bonk)
-		return FALSE
-
-	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
-	head_bonk()
-
-	return TRUE
 
 // VISUALS
 /datum/table_crawl_controller/proc/apply_visual()
