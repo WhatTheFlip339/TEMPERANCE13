@@ -144,17 +144,17 @@
 
 	if(!table_crawl)
 		table_crawl = new(src)
-	if(!rest && table_crawl?.state == TABLECRAWL_UNDER)
-		table_crawl.try_bonk()
 	if(resting)
 		AddElement(/datum/element/table_crawl)
 	table_crawl?.refresh()
 
 /mob/living/carbon/human/stand_up()
-	if(table_crawl)
+	// Prevent standing up under tables
+	if(table_crawl?.state == TABLECRAWL_UNDER)
 		table_crawl.try_bonk()
+		return FALSE
 
-	. = ..()
+	return ..()
 
 // ELEMENT triggers entry
 /datum/element/table_crawl
