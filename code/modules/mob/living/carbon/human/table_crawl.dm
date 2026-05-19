@@ -155,6 +155,7 @@
 /datum/element/table_crawl/Attach(mob/living/carbon/human/H)
 	RegisterSignal(H, COMSIG_MOVABLE_BUMP, PROC_REF(on_bump))
 	RegisterSignal(H, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
+	RegisterSignal(H, COMSIG_MOVABLE_PRE_MOVE, PROC_REF(on_pre_move))
 
 /datum/element/table_crawl/Detach(mob/living/carbon/human/H, ...)
 	UnregisterSignal(H, list(COMSIG_MOVABLE_BUMP, COMSIG_MOVABLE_MOVED))
