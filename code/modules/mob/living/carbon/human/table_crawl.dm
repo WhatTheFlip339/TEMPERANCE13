@@ -98,14 +98,18 @@
 	)
 
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
-	M.Immobilize(TABLE_CRAWL_BONK_STUN)
+	M.apply_status_effect(STATUS_EFFECT_STUN, TABLE_CRAWL_BONK_STUN)
 
 /datum/table_crawl_controller/proc/try_bonk()
+	if(state != TABLECRAWL_UNDER)
+		return FALSE
+
 	if(world.time < next_bonk)
 		return FALSE
 
 	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
 	head_bonk()
+	return TRUE
 
 // VISUALS
 /datum/table_crawl_controller/proc/apply_visual()
@@ -171,8 +175,17 @@
 	RegisterSignal(H, COMSIG_MOB_CLICKON, PROC_REF(on_click))
 
 /datum/element/table_crawl/Detach(mob/living/carbon/human/H, ...)
-	UnregisterSignal(H, list(COMSIG_MOVABLE_BUMP, COMSIG_MOVABLE_MOVED))
+	UnregisterSignal(H, list(
+		COMSIG_MOVABLE_BUMP,
+		COMSIG_MOVABLE_MOVED,
+		COMSIG_MOVABLE_PRE_MOVE,
+		COMSIG_HUMAN_EARLY_UNARMED_ATTACK,
+		COMSIG_MOB_ITEM_ATTACK,
+		COMSIG_MOB_CLICKON
+	))
+	H.table_crawl?.clear_visual()
 	H.table_crawl = null
+
 	return ..()
 
 /datum/element/table_crawl/proc/on_bump(mob/living/carbon/human/H, atom/A)
@@ -211,3 +224,16 @@
 		return NONE
 	to_chat(H, span_warning("I can't do that from under the table."))
 	return COMSIG_MOB_CANCEL_CLICKON
+
+/obj/structure/table/proc/get_hidden_crawlers()
+	var/turf/Turf = get_turf(src)
+	if(!Turf)
+		return list()
+
+	var/list/hidden = list()
+
+	for(var/mob/living/carbon/human/M in Turf)
+		if(M.table_crawl?.state == TABLECRAWL_UNDER)
+			hidden += M
+
+	return hidden
