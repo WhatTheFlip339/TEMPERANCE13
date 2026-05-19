@@ -205,3 +205,10 @@
 	if(H.table_crawl?.state == TABLECRAWL_UNDER)
 		to_chat(H, span_warning("I can't attack from under the table."))
 		return COMPONENT_ITEM_NO_ATTACK
+
+/datum/element/table_crawl/proc/on_click(mob/living/carbon/human/H, atom/target, params)
+	SIGNAL_HANDLER
+	if(H.table_crawl?.state != TABLECRAWL_UNDER)
+		return NONE
+	to_chat(H, span_warning("I can't do that from under the table."))
+	return COMSIG_MOB_CANCEL_CLICKON
