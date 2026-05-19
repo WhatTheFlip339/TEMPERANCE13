@@ -39,19 +39,25 @@
 
 /obj/structure/table/examine(mob/user)
 	. = ..()
-	// must be adjacent
-	if(get_dist(user, src) != 1)
+
+	var/mob/living/carbon/human/H = user
+	if(!istype(H))
 		return
-	var/list/hidden = get_hidden_table_crawlers(src)
-	if(!length(hidden))
+
+	if(get_dist(H, src) != 1)
 		return
-	// must be lying down (your “examining closely” condition)
-	if(!user.resting)
-		. += span_notice("You notice nothing unusual about the table.")
+
+	if(!H.resting)
 		return
-	// reveal content
-	for(var/mob/living/M in hidden)
-		. += span_warning("You notice movement beneath the table... someone is hiding underneath!")
+
+	var/turf/T = get_turf(src)
+	if(!T)
+		return
+
+	for(var/mob/living/carbon/human/M in T)
+		if(M.table_crawl?.state == TABLECRAWL_UNDER)
+			. += span_warning("You notice movement beneath the table... someone is hiding underneath!")
+			break
 
 /obj/structure/table/proc/deconstruction_hints(mob/user)
 	return span_notice("The top is <b>screwed</b> on, but the main <b>bolts</b> are also visible.")
