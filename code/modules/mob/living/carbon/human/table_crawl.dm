@@ -1,5 +1,5 @@
 //------------------------------------------------------------
-// MOB HOOK
+// MOB VAR
 //------------------------------------------------------------
 /mob/living/carbon/human
 	var/datum/table_crawl_controller/table_crawl
@@ -11,7 +11,6 @@
 /datum/table_crawl_controller
 	var/mob/living/carbon/human/owner
 	var/state = TABLECRAWL_NONE
-
 	var/tmp/next_bonk = 0
 
 /datum/table_crawl_controller/New(mob/living/carbon/human/M)
@@ -27,7 +26,7 @@
 
 /datum/table_crawl_controller/proc/get_table(atom/location)
 	var/turf/T = get_turf(location)
-	if(!T) return
+	if(!T) return null
 	for(var/obj/structure/table/X in T)
 		return X
 
@@ -55,57 +54,75 @@
 
 
 //------------------------------------------------------------
-// SAFE MOVE CHECK (NO DENSITY MUTATION)
+// SAFE PASS CHECK (NO DENSITY MUTATION)
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/can_virtual(obj/structure/table/T, turf/target)
 	var/mob/living/carbon/human/M = owner
 	var/turf/S = get_turf(M)
 
-	if(!S || !target || S == target) return FALSE
+	if(!S || !target || S == target)
+		return FALSE
 
-	if(S.LinkBlockedWithAccess(target, M, null)) return FALSE
-	if(!target.CanPass(M, target)) return FALSE
+	if(S.LinkBlockedWithAccess(target, M, null))
+		return FALSE
+
+	if(!target.CanPass(M, target))
+		return FALSE
 
 	for(var/atom/movable/A as anything in target)
 		if(A == M || A == T) continue
-		if(!A.CanPass(M, S)) return FALSE
+		if(!A.CanPass(M, S))
+			return FALSE
 
 	return TRUE
 
 
 //------------------------------------------------------------
-// ENTRY VALIDATION
+// ENTRY CHECK
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/can_finish(obj/structure/table/T, turf/target)
 	var/mob/living/carbon/human/M = owner
 
-	if(QDELETED(M) || QDELETED(T)) return FALSE
-	if(!can_start()) return FALSE
-	if(get_table(M.loc)) return FALSE
-	if(get_turf(T) != target) return FALSE
+	if(QDELETED(M) || QDELETED(T))
+		return FALSE
 
-	if(get_dist(M, T) != 1) return FALSE
+	if(!can_start())
+		return FALSE
 
-	if(!can_virtual(T, target)) return FALSE
+	if(get_table(M.loc))
+		return FALSE
+
+	if(get_turf(T) != target)
+		return FALSE
+
+	if(get_dist(M, T) != 1)
+		return FALSE
+
+	if(!can_virtual(T, target))
+		return FALSE
 
 	return TRUE
 
 
 //------------------------------------------------------------
-// ENTRY FLOW
+// ENTRY
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/try_enter(obj/structure/table/T, turf/target)
-	if(state != TABLECRAWL_NONE) return
-	if(!can_finish(T, target)) return
+	if(state != TABLECRAWL_NONE)
+		return
+
+	if(!can_finish(T, target))
+		return
 
 	state = TABLECRAWL_ATTEMPTING
+
 	INVOKE_ASYNC(src, PROC_REF(begin_enter), T, target)
 
 
 /datum/table_crawl_controller/proc/begin_enter(obj/structure/table/T, turf/target)
 	var/mob/living/carbon/human/M = owner
 
-	if(!M || QDELETED(T))
+	if(QDELETED(M) || QDELETED(T))
 		state = TABLECRAWL_NONE
 		return
 
@@ -137,7 +154,7 @@
 
 
 //------------------------------------------------------------
-// MOVEMENT COMPLETE
+// IMPORTANT FIX: FINALIZE STATE HERE
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/on_moved()
 	var/mob/living/carbon/human/M = owner
@@ -166,8 +183,11 @@
 
 
 /datum/table_crawl_controller/proc/try_bonk()
-	if(!is_under() || !get_table(owner)) return FALSE
-	if(world.time < next_bonk) return FALSE
+	if(!is_under())
+		return FALSE
+
+	if(world.time < next_bonk)
+		return FALSE
 
 	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
 	head_bonk()
@@ -176,11 +196,10 @@
 
 
 //------------------------------------------------------------
-// VISUALS
+// VISUAL
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/apply_visual()
 	var/mob/living/carbon/human/M = owner
-
 	M.reset_offsets("structure_climb")
 	M.layer = TABLE_LAYER - TABLE_CRAWL_UNDER_LAYER_OFFSET
 	M.plane = GAME_PLANE_LOWER
@@ -188,14 +207,13 @@
 
 /datum/table_crawl_controller/proc/clear_visual()
 	var/mob/living/carbon/human/M = owner
-
 	M.reset_offsets("structure_climb")
 	M.layer = LYING_MOB_LAYER
 	M.plane = initial(M.plane)
 
 
 //------------------------------------------------------------
-// REFRESH
+// REFRESH (CRITICAL FIX HERE)
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/refresh()
 	var/mob/living/carbon/human/M = owner
@@ -207,49 +225,7 @@
 	if(state == TABLECRAWL_UNDER)
 		if(!can_remain() || !get_table(M))
 			state = TABLECRAWL_NONE
+			clear_visual()
 			return
 
 		apply_visual()
-
-
-//------------------------------------------------------------
-// MOB HOOK
-//------------------------------------------------------------
-/mob/living/carbon/human/set_resting(rest, silent = TRUE)
-	if(!table_crawl)
-		table_crawl = new(src)
-
-	. = ..()
-
-	if(resting)
-		AddElement(/datum/element/table_crawl)
-
-	table_crawl.refresh()
-
-
-//------------------------------------------------------------
-// ELEMENT (HOOK BRIDGE ONLY)
-//------------------------------------------------------------
-/datum/element/table_crawl
-	element_flags = ELEMENT_DETACH
-
-
-/datum/element/table_crawl/Attach(mob/living/carbon/human/H)
-	RegisterSignal(H, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
-	RegisterSignal(H, COMSIG_MOVABLE_BUMP, PROC_REF(on_bump))
-
-
-/datum/element/table_crawl/Detach(mob/living/carbon/human/H, ...)
-	UnregisterSignal(H, list(COMSIG_MOVABLE_MOVED, COMSIG_MOVABLE_BUMP))
-	H.table_crawl?.clear_visual()
-	H.table_crawl = null
-	return ..()
-
-
-/datum/element/table_crawl/proc/on_moved(mob/living/carbon/human/H)
-	H.table_crawl?.on_moved()
-
-
-/datum/element/table_crawl/proc/on_bump(mob/living/carbon/human/H, atom/A)
-	if(!istype(A, /obj/structure/table)) return
-	H.table_crawl?.try_enter(A, get_turf(A))
