@@ -103,15 +103,25 @@
 // VISUALS
 /datum/table_crawl_controller/proc/apply_visual()
 	var/mob/living/carbon/human/M = owner
+
 	M.reset_offsets("structure_climb")
 	M.layer = TABLE_LAYER - TABLE_CRAWL_UNDER_LAYER_OFFSET
 	M.plane = GAME_PLANE_LOWER
 
+	ADD_TRAIT(M, TRAIT_NEARSIGHT, "tablecrawl")
+	M.overlay_fullscreen("nearsighted", /atom/movable/screen/fullscreen/impaired)
+
 /datum/table_crawl_controller/proc/clear_visual()
 	var/mob/living/carbon/human/M = owner
+
 	M.reset_offsets("structure_climb")
 	M.layer = LYING_MOB_LAYER
 	M.plane = initial(M.plane)
+
+	REMOVE_TRAIT(M, TRAIT_NEARSIGHT, "tablecrawl")
+
+	if(!HAS_TRAIT(M, TRAIT_NEARSIGHT))
+		M.clear_fullscreen("nearsighted")
 
 
 // REFRESH (STATE MACHINE)
@@ -156,6 +166,9 @@
 	RegisterSignal(H, COMSIG_MOVABLE_BUMP, PROC_REF(on_bump))
 	RegisterSignal(H, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
 	RegisterSignal(H, COMSIG_MOVABLE_PRE_MOVE, PROC_REF(on_pre_move))
+	RegisterSignal(H, COMSIG_HUMAN_EARLY_UNARMED_ATTACK, PROC_REF(on_unarmed))
+	RegisterSignal(H, COMSIG_MOB_ITEM_ATTACK, PROC_REF(on_item_attack))
+	RegisterSignal(H, COMSIG_MOB_CLICKON, PROC_REF(on_click))
 
 /datum/element/table_crawl/Detach(mob/living/carbon/human/H, ...)
 	UnregisterSignal(H, list(COMSIG_MOVABLE_BUMP, COMSIG_MOVABLE_MOVED))
@@ -179,3 +192,15 @@
 
 /datum/element/table_crawl/proc/on_moved(mob/living/carbon/human/H)
 	H.table_crawl?.refresh()
+
+/datum/element/table_crawl/proc/on_unarmed(mob/living/carbon/human/H, atom/target)
+	SIGNAL_HANDLER
+	if(H.table_crawl?.state == TABLECRAWL_UNDER)
+		to_chat(H, span_warning("I can't attack from under the table."))
+		return COMPONENT_NO_ATTACK_HAND
+
+/datum/element/table_crawl/proc/on_item_attack(mob/living/carbon/human/H)
+	SIGNAL_HANDLER
+	if(H.table_crawl?.state == TABLECRAWL_UNDER)
+		to_chat(H, span_warning("I can't attack from under the table."))
+		return COMPONENT_ITEM_NO_ATTACK
