@@ -109,7 +109,7 @@
 	M.plane = GAME_PLANE_LOWER
 
 	ADD_TRAIT(M, TRAIT_NEARSIGHT, "tablecrawl")
-	M.overlay_fullscreen("nearsighted", /atom/movable/screen/fullscreen/impaired)
+	M.update_sight()
 
 /datum/table_crawl_controller/proc/clear_visual()
 	var/mob/living/carbon/human/M = owner
@@ -119,9 +119,7 @@
 	M.plane = initial(M.plane)
 
 	REMOVE_TRAIT(M, TRAIT_NEARSIGHT, "tablecrawl")
-
-	if(!HAS_TRAIT(M, TRAIT_NEARSIGHT))
-		M.clear_fullscreen("nearsighted")
+	M.update_sight()
 
 
 // REFRESH (STATE MACHINE)
