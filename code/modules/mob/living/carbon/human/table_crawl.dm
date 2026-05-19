@@ -145,7 +145,7 @@
 	)
 
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
-	M.Stun(TABLE_CRAWL_BONK_STUN)
+	M.Stun(20)
 
 /datum/table_crawl_controller/proc/try_bonk()
 	if(state != TABLECRAWL_UNDER)
