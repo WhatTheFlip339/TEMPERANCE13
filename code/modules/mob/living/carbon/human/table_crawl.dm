@@ -48,29 +48,36 @@
 // ENTRY VALIDATION
 /datum/table_crawl_controller/proc/can_finish(obj/structure/table/T, turf/target)
 	var/mob/living/carbon/human/M = owner
+
 	if(QDELETED(M) || QDELETED(T))
 		return FALSE
+
 	if(!can_start())
 		return FALSE
+
 	if(get_table(M.loc))
 		return FALSE
+
 	if(get_turf(T) != target)
 		return FALSE
+
 	if(get_dist(M, T) != 1)
 		return FALSE
-	// check existing crawlers
-	var/list/others = get_crawlers_in_tile(target)
-	if(length(others))
-		to_chat(M, span_warning("Something is already under the table..."))
 
-		// OPTIONAL: block entry entirely
-		// return FALSE
+	// ONLY CHECK, NO MESSAGES
+	if(length(get_crawlers_in_tile(target)))
+		return FALSE
 
 	return TRUE
 
 // ENTRY TRIGGER
 /datum/table_crawl_controller/proc/try_enter(obj/structure/table/T, turf/target)
 	if(state != TABLECRAWL_NONE)
+		return
+	// PRE-CHECK FOR MESSAGE ONCE
+	var/list/others = get_crawlers_in_tile(target)
+	if(length(others))
+		to_chat(owner, span_warning("Something is already under the table..."))
 		return
 	if(!can_finish(T, target))
 		return
