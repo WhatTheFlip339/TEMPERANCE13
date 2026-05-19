@@ -232,25 +232,6 @@
 				new framestack(T, framestackamount)
 	qdel(src)
 
-/proc/get_hidden_table_crawlers(obj/structure/table/T)
-	var/turf/Turf = get_turf(T)
-	if(!Turf)
-		return list()
-
-	var/list/hidden = list()
-
-	for(var/mob/living/M in Turf)
-		if(!M)
-			continue
-		if(!M.table_crawl)
-			continue
-		if(M.table_crawl.state != TABLECRAWL_UNDER)
-			continue
-
-		hidden += M
-
-	return hidden
-
 /*
  * Wooden tables
  */
