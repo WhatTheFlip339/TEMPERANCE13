@@ -105,6 +105,7 @@
 		return
 
 	var/delay = T.climb_time
+	
 
 	M.changeNext_move(delay, override = TRUE)
 
@@ -123,6 +124,10 @@
 		return
 
 	// FORCE ENTRY
+	M.dropItemToGround(M.get_active_held_item())
+	M.dropItemToGround(M.get_inactive_held_item())
+	
+		
 	M.forceMove(target)
 
 	state = TABLECRAWL_UNDER
@@ -139,7 +144,7 @@
 		span_warning("You bump your head!")
 	)
 
-	playsound(S, 'sound/effects/hit1.ogg', 100, TRUE)
+	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
 	M.Stun(TABLE_CRAWL_BONK_STUN)
 
 /datum/table_crawl_controller/proc/try_bonk()
@@ -202,7 +207,6 @@
 	table_crawl?.refresh()
 
 /mob/living/carbon/human/stand_up()
-	head_bonk()
 	if(table_crawl?.state == TABLECRAWL_UNDER)
 		table_crawl.try_bonk()
 		return FALSE
@@ -280,6 +284,7 @@
 	to_chat(H, span_warning("I can't do that from under the table."))
 	return COMSIG_MOB_CANCEL_CLICKON
 
+
 /obj/structure/table/proc/get_hidden_crawlers()
 	var/turf/Turf = get_turf(src)
 
@@ -293,7 +298,3 @@
 			hidden += M
 
 	return hidden
-		if(M.table_crawl?.state == TABLECRAWL_UNDER)
-			L += M
-
-	return L
