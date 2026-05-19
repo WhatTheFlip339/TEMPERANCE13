@@ -98,7 +98,7 @@
 	)
 
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
-	M.Stun(TABLE_CRAWL_BONK_STUN)
+	M.Immobilize(TABLE_CRAWL_BONK_STUN)
 
 // VISUALS
 /datum/table_crawl_controller/proc/apply_visual()
