@@ -169,5 +169,13 @@
 		H.table_crawl = new(H)
 	H.table_crawl.try_enter(A, get_turf(A))
 
+/datum/element/table_crawl/proc/on_pre_move(mob/living/carbon/human/H, atom/newloc)
+	SIGNAL_HANDLER
+	if(H.table_crawl?.state != TABLECRAWL_UNDER)
+		return
+	// if they stop meeting crawl conditions
+	if(!H.table_crawl.can_start())
+		return COMPONENT_MOVABLE_BLOCK_PRE_MOVE
+
 /datum/element/table_crawl/proc/on_moved(mob/living/carbon/human/H)
 	H.table_crawl?.refresh()
