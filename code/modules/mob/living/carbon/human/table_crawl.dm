@@ -150,6 +150,7 @@
 
 /mob/living/carbon/human/stand_up()
 	if(table_crawl?.state == TABLECRAWL_UNDER)
+		table_crawl.head_bonk()
 		if(world.time >= table_crawl.next_bonk)
 			table_crawl.next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
 			table_crawl.head_bonk()
