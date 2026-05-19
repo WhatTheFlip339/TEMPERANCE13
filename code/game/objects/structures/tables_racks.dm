@@ -39,7 +39,19 @@
 
 /obj/structure/table/examine(mob/user)
 	. = ..()
-//	. += deconstruction_hints(user)
+	// must be adjacent
+	if(get_dist(user, src) != 1)
+		return
+	var/list/hidden = get_hidden_table_crawlers(src)
+	if(!length(hidden))
+		return
+	// must be lying down (your “examining closely” condition)
+	if(!user.resting)
+		. += span_notice("You notice nothing unusual about the table.")
+		return
+	// reveal content
+	for(var/mob/living/M in hidden)
+		. += span_warning("You notice movement beneath the table... someone is hiding underneath!")
 
 /obj/structure/table/proc/deconstruction_hints(mob/user)
 	return span_notice("The top is <b>screwed</b> on, but the main <b>bolts</b> are also visible.")
