@@ -214,6 +214,18 @@
 				new framestack(T, framestackamount)
 	qdel(src)
 
+/proc/get_mobs_under_table(obj/structure/table/T)
+	var/turf/Turf = get_turf(T)
+	if(!Turf) return list()
+
+	var/list/under = list()
+
+	for(var/mob/living/M in Turf)
+		if(M.table_crawl?.state == TABLECRAWL_UNDER)
+			under += M
+
+	return under
+
 /*
  * Wooden tables
  */
