@@ -1,5 +1,5 @@
 //------------------------------------------------------------
-// MOB VAR
+// MOB HOOK
 //------------------------------------------------------------
 /mob/living/carbon/human
 	var/datum/table_crawl_controller/table_crawl
@@ -18,7 +18,7 @@
 
 
 //------------------------------------------------------------
-// STATE HELPERS
+// HELPERS
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/is_under()
 	return state == TABLECRAWL_UNDER
@@ -70,7 +70,8 @@
 		return FALSE
 
 	for(var/atom/movable/A as anything in target)
-		if(A == M || A == T) continue
+		if(A == M || A == T)
+			continue
 		if(!A.CanPass(M, S))
 			return FALSE
 
@@ -105,7 +106,7 @@
 
 
 //------------------------------------------------------------
-// ENTRY
+// ENTRY FLOW
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/try_enter(obj/structure/table/T, turf/target)
 	if(state != TABLECRAWL_NONE)
@@ -148,13 +149,22 @@
 
 	state = TABLECRAWL_PENDING
 
-	var/d = get_dir(M, target)
-	if(!d || !step(M, d))
+	// --------------------------------------------------------
+	// FIX: RELIABLE MOVEMENT (NO step(), NO signal dependency)
+	// --------------------------------------------------------
+	var/turf/next = get_step(M, get_dir(M, target))
+
+	if(!next)
 		state = TABLECRAWL_NONE
+		return
+
+	if(!M.Move(next))
+		state = TABLECRAWL_NONE
+		return
 
 
 //------------------------------------------------------------
-// IMPORTANT FIX: FINALIZE STATE HERE
+// FINALIZE ENTRY (THIS MUST FIRE VIA MOVED SIGNAL)
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/on_moved()
 	var/mob/living/carbon/human/M = owner
@@ -196,7 +206,7 @@
 
 
 //------------------------------------------------------------
-// VISUAL
+// VISUALS
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/apply_visual()
 	var/mob/living/carbon/human/M = owner
@@ -213,7 +223,7 @@
 
 
 //------------------------------------------------------------
-// REFRESH (CRITICAL FIX HERE)
+// REFRESH
 //------------------------------------------------------------
 /datum/table_crawl_controller/proc/refresh()
 	var/mob/living/carbon/human/M = owner
@@ -229,3 +239,48 @@
 			return
 
 		apply_visual()
+
+
+//------------------------------------------------------------
+// MOB HOOK
+//------------------------------------------------------------
+/mob/living/carbon/human/set_resting(rest, silent = TRUE)
+	if(!table_crawl)
+		table_crawl = new(src)
+
+	. = ..()
+
+	if(resting)
+		AddElement(/datum/element/table_crawl)
+
+	table_crawl.refresh()
+
+
+//------------------------------------------------------------
+// ELEMENT
+//------------------------------------------------------------
+/datum/element/table_crawl
+	element_flags = ELEMENT_DETACH
+
+
+/datum/element/table_crawl/Attach(mob/living/carbon/human/H)
+	RegisterSignal(H, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
+	RegisterSignal(H, COMSIG_MOVABLE_BUMP, PROC_REF(on_bump))
+
+
+/datum/element/table_crawl/Detach(mob/living/carbon/human/H, ...)
+	UnregisterSignal(H, list(COMSIG_MOVABLE_MOVED, COMSIG_MOVABLE_BUMP))
+	H.table_crawl?.clear_visual()
+	H.table_crawl = null
+	return ..()
+
+
+/datum/element/table_crawl/proc/on_moved(mob/living/carbon/human/H)
+	H.table_crawl?.on_moved()
+
+
+/datum/element/table_crawl/proc/on_bump(mob/living/carbon/human/H, atom/A)
+	if(!istype(A, /obj/structure/table))
+		return
+
+	H.table_crawl?.try_enter(A, get_turf(A))
