@@ -124,7 +124,7 @@
 		span_warning("You bump your head!")
 	)
 
-	playsound(S, 'sound/effects/hit1.ogg', 100, TRUE)
+	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
 	M.Immobilize(TABLE_CRAWL_BONK_STUN)
 
 
