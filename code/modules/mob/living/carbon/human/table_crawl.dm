@@ -151,7 +151,7 @@
 /mob/living/carbon/human/stand_up()
 	// Prevent standing up under tables
 	if(table_crawl?.state == TABLECRAWL_UNDER)
-		table_crawl.try_bonk()
+		table_crawl.head_bonk()
 		return FALSE
 
 	return ..()
