@@ -1,271 +1,278 @@
-
-// vars
-//====================================================================
-
+//------------------------------------------------------------
+// MOB HOOK (only one var)
+//------------------------------------------------------------
 /mob/living/carbon/human
-	var/tmp/table_crawl_state = TABLECRAWL_NONE
-	var/tmp/table_crawl_passtable_owned = FALSE
-	var/tmp/table_crawl_restoring = FALSE
-	var/tmp/table_crawl_next_bonk = 0
-	var/tmp/table_crawl_next_action_warning = 0
-	var/tmp/list/table_crawl_spell_actions
+	var/datum/table_crawl_controller/table_crawl
 
 
-// state helpers
-//====================================================================
+//------------------------------------------------------------
+// CONTROLLER DATUM
+//------------------------------------------------------------
+/datum/table_crawl_controller
+	var/mob/living/carbon/human/owner
+	var/state = TABLECRAWL_NONE
 
-/mob/living/carbon/human/proc/is_table_crawl_player()
-	return !!mind && !!client
-
-/mob/living/carbon/human/proc/is_under_table()
-	return table_crawl_state == TABLECRAWL_UNDER
-
-/mob/living/carbon/human/proc/is_table_crawling()
-	return table_crawl_state != TABLECRAWL_NONE
-
-
-/mob/living/carbon/human/proc/set_table_crawl_state(s)
-	table_crawl_state = s
-	refresh_table_crawl()
+	var/tmp/next_bonk = 0
+	var/tmp/next_warning = 0
+	var/tmp/list/spell_actions
 
 
-/mob/living/carbon/human/proc/end_table_crawl()
-	table_crawl_state = TABLECRAWL_NONE
-	clear_table_crawl_passtable()
-	clear_table_crawl_spell_actions()
-	update_table_crawl_visibility()
-	clear_table_crawl_visual()
+/datum/table_crawl_controller/New(mob/living/carbon/human/M)
+	owner = M
 
 
-// Validation
-//====================================================================
+//------------------------------------------------------------
+// STATE HELPERS
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/is_under_table()
+	return state == TABLECRAWL_UNDER
 
-/mob/living/carbon/human/proc/can_table_crawl()
-	if(buckled) return FALSE
-	if(mobility_flags & MOBILITY_STAND) return FALSE
-	if(m_intent != MOVE_INTENT_SNEAK) return FALSE
-	if(mob_size >= MOB_SIZE_LARGE) return FALSE
+
+/datum/table_crawl_controller/proc/is_active()
+	return state != TABLECRAWL_NONE
+
+
+/datum/table_crawl_controller/proc/set_state(new_state)
+	state = new_state
+	refresh()
+
+
+/datum/table_crawl_controller/proc/end()
+	state = TABLECRAWL_NONE
+	clear_visual()
+	clear_spell()
+	clear_passtable()
+
+
+//------------------------------------------------------------
+// VALIDATION
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/can_crawl()
+	var/mob/M = owner
+
+	if(M.buckled) return FALSE
+	if(M.mobility_flags & MOBILITY_STAND) return FALSE
+	if(M.m_intent != MOVE_INTENT_SNEAK) return FALSE
+	if(M.mob_size >= MOB_SIZE_LARGE) return FALSE
+
 	return TRUE
 
-/mob/living/carbon/human/proc/can_start_table_crawl()
-	return can_table_crawl() && resting
 
-/mob/living/carbon/human/proc/can_remain_table_crawl()
-	return can_table_crawl() && resting
+/datum/table_crawl_controller/proc/can_start()
+	return can_crawl() && owner.resting
 
 
-/mob/living/carbon/human/proc/get_table_crawl_table(atom/location = loc)
+/datum/table_crawl_controller/proc/can_remain()
+	return can_crawl() && owner.resting
+
+
+/datum/table_crawl_controller/proc/get_table(atom/location)
 	var/turf/T = get_turf(location)
 	if(!T) return
-	for(var/obj/structure/table/t in T)
-		return t
+
+	for(var/obj/structure/table/X in T)
+		return X
 
 
+//------------------------------------------------------------
+// SAFE PASS CHECK (NO DENSITY MUTATION)
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/can_virtual_climb(obj/structure/table/T, turf/target)
+	var/mob/M = owner
+	var/turf/S = get_turf(M)
 
-// safety check
-//====================================================================
-
-/mob/living/carbon/human/proc/can_virtual_table_climb(obj/structure/table/T, turf/target)
-	var/turf/S = get_turf(src)
 	if(!S || !target || S == target) return FALSE
-
-	if(S.LinkBlockedWithAccess(target, src, null)) return FALSE
-	if(!target.CanPass(src, target)) return FALSE
+	if(S.LinkBlockedWithAccess(target, M, null)) return FALSE
+	if(!target.CanPass(M, target)) return FALSE
 
 	for(var/atom/movable/A as anything in target)
-		if(A == src || A == T) continue
-		if(!A.CanPass(src, S)) return FALSE
+		if(A == M || A == T) continue
+		if(!A.CanPass(M, S)) return FALSE
 
 	return TRUE
 
 
-/mob/living/carbon/human/proc/can_finish_table_crawl(obj/structure/table/T, turf/target)
-	if(QDELETED(src) || QDELETED(T)) return FALSE
-	if(!is_table_crawl_player()) return FALSE
-	if(!can_start_table_crawl()) return FALSE
-	if(get_table_crawl_table(loc)) return FALSE
+/datum/table_crawl_controller/proc/can_finish(obj/structure/table/T, turf/target)
+	var/mob/M = owner
+
+	if(QDELETED(M) || QDELETED(T)) return FALSE
+	if(!can_start()) return FALSE
+	if(get_table(M.loc)) return FALSE
 	if(get_turf(T) != target) return FALSE
 	if(!Adjacent(T)) return FALSE
-	if(!can_virtual_table_climb(T, target)) return FALSE
+	if(!can_virtual_climb(T, target)) return FALSE
+
 	return TRUE
 
 
+//------------------------------------------------------------
+// ENTRY FLOW
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/try_enter(obj/structure/table/T, turf/target)
+	if(state != TABLECRAWL_NONE) return
+	if(!can_finish(T, target)) return
 
-// movement flow
-//====================================================================
-
-/mob/living/carbon/human/proc/try_offer_table_crawl(obj/structure/table/T, turf/target)
-	if(is_table_crawling()) return
-	if(table_crawl_state == TABLECRAWL_ATTEMPTING || doing) return
-	if(!can_finish_table_crawl(T, target)) return
-
-	table_crawl_state = TABLECRAWL_ATTEMPTING
-	INVOKE_ASYNC(src, TYPE_PROC_REF(/mob/living/carbon/human, begin_table_crawl_attempt), T, target)
+	state = TABLECRAWL_ATTEMPTING
+	INVOKE_ASYNC(src, PROC_REF(begin_enter), T, target)
 
 
-/mob/living/carbon/human/proc/begin_table_crawl_attempt(obj/structure/table/T, turf/target)
-	if(QDELETED(src) || QDELETED(T)) { table_crawl_state = TABLECRAWL_NONE; return }
-	if(!can_finish_table_crawl(T, target)) { table_crawl_state = TABLECRAWL_NONE; return }
+/datum/table_crawl_controller/proc/begin_enter(obj/structure/table/T, turf/target)
+	var/mob/M = owner
 
-	var/delay = max(T.climb_time, 0)
-	changeNext_move(delay, override = TRUE)
-
-	visible_message(span_warning("[src] starts crawling under [T]."),
-	span_warning("You start crawling under [T]..."))
-
-	if(delay && !do_after(src, delay, target = T,
-		extra_checks = CALLBACK(src, TYPE_PROC_REF(/mob/living/carbon/human/can_finish_table_crawl), T, target)))
-		table_crawl_state = TABLECRAWL_NONE
+	if(!M || QDELETED(M) || QDELETED(T))
+		state = TABLECRAWL_NONE
 		return
 
-	if(!can_finish_table_crawl(T, target)) { table_crawl_state = TABLECRAWL_NONE; return }
+	if(!can_finish(T, target))
+		state = TABLECRAWL_NONE
+		return
 
-	set_table_crawl_state(TABLECRAWL_PENDING)
+	var/delay = T.climb_time
+	M.changeNext_move(delay, override = TRUE)
 
-	var/d = get_dir(src, target)
-	if(!d || !step(src, d))
-		table_crawl_state = TABLECRAWL_NONE
+	visible_message(
+		span_warning("[M] starts crawling under [T]."),
+		span_warning("You start crawling under [T]...")
+	)
+
+	if(delay && !do_after(M, delay, target = T))
+		state = TABLECRAWL_NONE
+		return
+
+	if(!can_finish(T, target))
+		state = TABLECRAWL_NONE
+		return
+
+	state = TABLECRAWL_PENDING
+
+	var/d = get_dir(M, target)
+	if(!d || !step(M, d))
+		state = TABLECRAWL_NONE
 
 
+//------------------------------------------------------------
+// MOVEMENT COMPLETION
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/on_moved()
+	var/mob/M = owner
 
-// state
-//====================================================================
+	if(state == TABLECRAWL_PENDING && get_table(M))
+		state = TABLECRAWL_UNDER
 
-/mob/living/carbon/human/proc/finalize_table_crawl()
-	if(table_crawl_state == TABLECRAWL_PENDING && get_table_crawl_table())
-		table_crawl_state = TABLECRAWL_UNDER
+	refresh()
 
 
-// bonk code
-//====================================================================
+//------------------------------------------------------------
+// BONK SYSTEM
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/head_bonk()
+	var/mob/M = owner
+	var/obj/structure/table/T = get_table(M)
+	var/atom/S = T ? T : M
 
-/mob/living/carbon/human/proc/table_crawl_head_bonk()
-	var/obj/structure/table/T = get_table_crawl_table()
-	var/atom/S = T ? T : src
-	var/n = T ? "[T]" : "the table"
-
-	visible_message(span_warning("[src] bumps their head on [n]!"),
-	span_warning("You bump your head on [n]!"))
+	visible_message(
+		span_warning("[M] bumps their head on [T ? "[T]" : "the table"]!"),
+		span_warning("You bump your head!")
+	)
 
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
-	Stun(TABLE_CRAWL_BONK_STUN)
+	M.Stun(TABLE_CRAWL_BONK_STUN)
 
 
-// visuality with tables
-//====================================================================
+/datum/table_crawl_controller/proc/try_bonk()
+	if(!is_under_table() || !get_table(owner)) return FALSE
 
-/mob/living/carbon/human/proc/apply_table_crawl_visual()
-	reset_offsets("structure_climb")
-	layer = TABLE_LAYER - TABLE_CRAWL_UNDER_LAYER_OFFSET
-	plane = GAME_PLANE_LOWER
+	if(world.time < next_bonk) return FALSE
+	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
 
-
-/mob/living/carbon/human/proc/clear_table_crawl_visual()
-	var/obj/structure/table/T = get_table_crawl_table()
-	if(T?.climb_offset)
-		set_mob_offsets("structure_climb", _y = T.climb_offset)
-	else
-		reset_offsets("structure_climb")
-
-	layer = LYING_MOB_LAYER
-	plane = initial(plane)
+	head_bonk()
+	refresh()
+	return TRUE
 
 
-/mob/living/carbon/human/proc/update_table_crawl_visibility()
-	if(is_under_table())
-		overlay_fullscreen(TABLE_CRAWL_FULLSCREEN_CATEGORY, /atom/movable/screen/fullscreen/impaired, 1)
-	else
-		clear_fullscreen(TABLE_CRAWL_FULLSCREEN_CATEGORY, 0)
+//------------------------------------------------------------
+// VISUALS
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/apply_visual()
+	var/mob/M = owner
+
+	M.reset_offsets("structure_climb")
+	M.layer = TABLE_LAYER - TABLE_CRAWL_UNDER_LAYER_OFFSET
+	M.plane = GAME_PLANE_LOWER
 
 
-// spells under table
-//====================================================================
+/datum/table_crawl_controller/proc/clear_visual()
+	var/mob/M = owner
 
-/mob/living/carbon/human/proc/clear_table_crawl_spell_actions()
-	if(!table_crawl_spell_actions) return
-	for(var/datum/action/spell_action/A in table_crawl_spell_actions)
-		UnregisterSignal(A, COMSIG_ACTION_TRIGGER, PROC_REF(handle_table_crawl_spell_trigger))
-	table_crawl_spell_actions.Cut()
+	M.reset_offsets("structure_climb")
+	M.layer = LYING_MOB_LAYER
+	M.plane = initial(M.plane)
 
 
-/mob/living/carbon/human/proc/handle_table_crawl_spell_trigger(datum/action/spell_action/source, datum/action/action)
-	SIGNAL_HANDLER
-	if(!is_under_table()) return NONE
+//------------------------------------------------------------
+// REFRESH CORE
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/refresh()
+	var/mob/M = owner
+
+	if(state == TABLECRAWL_NONE)
+		clear_visual()
+		return
+
+	if(state == TABLECRAWL_UNDER)
+		if(!can_remain() || !get_table(M))
+			end()
+			return
+
+		apply_visual()
+
+
+//------------------------------------------------------------
+// SPELL BLOCK (minimal)
+//------------------------------------------------------------
+/datum/table_crawl_controller/proc/handle_spell_trigger()
 	return COMPONENT_ACTION_BLOCK_TRIGGER
 
 
-// refreshing stuff
-//====================================================================
-
-/mob/living/carbon/human/proc/refresh_table_crawl()
-	if(table_crawl_state == TABLECRAWL_PENDING)
-		finalize_table_crawl()
-
-	if(table_crawl_state == TABLECRAWL_NONE)
-		clear_table_crawl_visual()
-		update_table_crawl_visibility()
-		clear_table_crawl_spell_actions()
-		return
-
-	if(table_crawl_state == TABLECRAWL_UNDER)
-		if(!can_remain_table_crawl() || !get_table_crawl_table())
-			end_table_crawl()
-			return
-
-		apply_table_crawl_visual()
-		update_table_crawl_visibility()
-
-
-//====================================================================
-
-/mob/living/carbon/human/proc/clear_table_crawl_passtable()
-	if(!table_crawl_passtable_owned) return
-	table_crawl_passtable_owned = FALSE
-	pass_flags &= ~PASSTABLE
-
-
-// hook
-//====================================================================
-
+//------------------------------------------------------------
+// MOB SETUP
+//------------------------------------------------------------
 /mob/living/carbon/human/set_resting(rest, silent = TRUE)
-	if(!rest && try_table_crawl_head_bonk()) rest = TRUE
+	if(!table_crawl)
+		table_crawl = new(src)
+
 	. = ..()
-	if(resting && is_table_crawl_player())
+
+	if(resting)
 		AddElement(/datum/element/table_crawl)
-	refresh_table_crawl()
+
+	table_crawl?.refresh()
 
 
-/mob/living/carbon/human/toggle_rest()
-	if(resting && try_table_crawl_head_bonk()) return
-	return ..()
-
-
-/mob/living/carbon/human/stand_up()
-	if(try_table_crawl_head_bonk()) return FALSE
-	return ..()
-
-
-// elements
-//====================================================================
-
+//------------------------------------------------------------
+// ELEMENT (signal bridge only)
+//------------------------------------------------------------
 /datum/element/table_crawl
 	element_flags = ELEMENT_DETACH
 
+
 /datum/element/table_crawl/Attach(datum/target)
 	if(!ishuman(target)) return ELEMENT_INCOMPATIBLE
+
 	RegisterSignal(target, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
 	RegisterSignal(target, COMSIG_MOVABLE_BUMP, PROC_REF(on_bump))
 
+
 /datum/element/table_crawl/Detach(mob/living/carbon/human/source, ...)
 	UnregisterSignal(source, list(COMSIG_MOVABLE_MOVED, COMSIG_MOVABLE_BUMP))
-	source.end_table_crawl()
+	source.table_crawl?.end()
 	return ..()
 
-/datum/element/table_crawl/proc/on_bump(mob/living/carbon/human/source, atom/A)
-	if(source.is_table_crawling() || !source.can_start_table_crawl()) return NONE
-	if(!istype(A, /obj/structure/table)) return NONE
-	source.try_offer_table_crawl(A, get_turf(A))
 
 /datum/element/table_crawl/proc/on_moved(mob/living/carbon/human/source)
-	source.clear_table_crawl_passtable()
-	source.refresh_table_crawl()
+	source.table_crawl?.on_moved()
+
+
+/datum/element/table_crawl/proc/on_bump(mob/living/carbon/human/source, atom/A)
+	if(!istype(A, /obj/structure/table)) return
+	source.table_crawl?.try_enter(A, get_turf(A))
