@@ -108,8 +108,7 @@
 	M.layer = TABLE_LAYER - TABLE_CRAWL_UNDER_LAYER_OFFSET
 	M.plane = GAME_PLANE_LOWER
 
-	ADD_TRAIT(M, TRAIT_NEARSIGHT, "tablecrawl")
-	M.update_sight()
+	M.become_nearsighted("tablecrawl")
 
 /datum/table_crawl_controller/proc/clear_visual()
 	var/mob/living/carbon/human/M = owner
@@ -118,8 +117,7 @@
 	M.layer = LYING_MOB_LAYER
 	M.plane = initial(M.plane)
 
-	REMOVE_TRAIT(M, TRAIT_NEARSIGHT, "tablecrawl")
-	M.update_sight()
+	M.cure_nearsighted("tablecrawl")
 
 
 // REFRESH (STATE MACHINE)
@@ -148,7 +146,6 @@
 
 /mob/living/carbon/human/stand_up()
 	if(table_crawl?.state == TABLECRAWL_UNDER)
-		table_crawl.head_bonk()
 		if(world.time >= table_crawl.next_bonk)
 			table_crawl.next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
 			table_crawl.head_bonk()
