@@ -151,16 +151,6 @@
 	Stun(TABLE_CRAWL_BONK_STUN)
 
 
-/mob/living/carbon/human/proc/try_table_crawl_head_bonk()
-	if(!is_under_table() || !get_table_crawl_table()) return FALSE
-	if(world.time < table_crawl_next_bonk) return FALSE
-
-	table_crawl_next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
-	table_crawl_head_bonk()
-	refresh_table_crawl()
-	return TRUE
-
-
 // visuality with tables
 //====================================================================
 
