@@ -100,16 +100,6 @@
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
 	M.Stun(TABLE_CRAWL_BONK_STUN)
 
-/datum/table_crawl_controller/proc/try_bonk()
-	if(state != TABLECRAWL_UNDER)
-		return FALSE
-	if(world.time < next_bonk)
-		return FALSE
-	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
-	head_bonk()
-	refresh()
-	return TRUE
-
 // VISUALS
 /datum/table_crawl_controller/proc/apply_visual()
 	var/mob/living/carbon/human/M = owner
