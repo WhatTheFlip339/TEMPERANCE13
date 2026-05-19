@@ -19,6 +19,18 @@
 	for(var/obj/structure/table/X in T)
 		return X
 
+/datum/table_crawl_controller/proc/get_crawlers_in_tile(turf/T)
+	var/list/under = list()
+
+	if(!T)
+		return under
+
+	for(var/mob/living/carbon/human/M in T)
+		if(M.table_crawl?.state == TABLECRAWL_UNDER)
+			under += M
+
+	return under
+
 // VALIDATION
 /datum/table_crawl_controller/proc/can_crawl()
 	var/mob/living/carbon/human/M = owner
@@ -46,6 +58,14 @@
 		return FALSE
 	if(get_dist(M, T) != 1)
 		return FALSE
+	// check existing crawlers
+	var/list/others = get_crawlers_in_tile(target)
+	if(length(others))
+		to_chat(M, span_warning("Something is already under the table..."))
+
+		// OPTIONAL: block entry entirely
+		// return FALSE
+
 	return TRUE
 
 // ENTRY TRIGGER
