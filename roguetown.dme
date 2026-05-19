@@ -124,6 +124,7 @@
 #include "code\__DEFINES\status_effects.dm"
 #include "code\__DEFINES\storytellers.dm"
 #include "code\__DEFINES\subsystems.dm"
+#include "code\__DEFINES\table_crawl.dm"
 #include "code\__DEFINES\text.dm"
 #include "code\__DEFINES\tgs.config.dm"
 #include "code\__DEFINES\tgs.dm"
