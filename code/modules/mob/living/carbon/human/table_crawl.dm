@@ -117,7 +117,7 @@
 		return FALSE
 	if(world.time < next_bonk)
 		return FALSE
-	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
+	next_bonk = (world.time + TABLE_CRAWL_BONK_COOLDOWN)
 	head_bonk()
 
 	return TRUE
