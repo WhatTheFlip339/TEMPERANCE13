@@ -84,7 +84,7 @@
 		state = TABLECRAWL_NONE
 		return
 	var/delay = T.climb_time
-	
+
 	M.changeNext_move(delay, override = TRUE)
 
 	M.visible_message(
@@ -104,7 +104,7 @@
 	// item drop before crawling completion
 	M.dropItemToGround(M.get_active_held_item())
 	M.dropItemToGround(M.get_inactive_held_item())
-	
+
 	// force move into table
 	M.forceMove(target)
 
@@ -117,7 +117,7 @@
 		return FALSE
 	if(world.time < next_bonk)
 		return FALSE
-	next_bonk = world.time + TABLE_CRAWL_BONK_COOLDOWN
+	next_bonk = (world.time + TABLE_CRAWL_BONK_COOLDOWN)
 	head_bonk()
 
 	return TRUE
