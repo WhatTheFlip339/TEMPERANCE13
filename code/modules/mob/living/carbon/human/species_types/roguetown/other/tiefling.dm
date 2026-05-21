@@ -90,8 +90,7 @@
 		/datum/body_marking/facepaint
 	)
 	languages = list(
-		/datum/language/common,
-		/datum/language/hellspeak,
+		/datum/language/common
 	)
 	stress_examine = TRUE
 	stress_desc = span_red("Alchemical freak!")

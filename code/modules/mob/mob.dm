@@ -178,7 +178,12 @@ GLOBAL_VAR_INIT(mobids, 1)
 	if(self_message)
 		hearers -= src
 	for(var/mob/M in hearers)
-		if(!M.client)
+		if(!M.client && !M.aghosted)
+			continue
+		if(M.aghosted)
+			if(!isclient(M.aghosted))
+				continue
+			to_chat(M.aghosted, span_green("(BODY) ")+"[message]")
 			continue
 		//This entire if/else chain could be in two lines but isn't for readibilties sake.
 		var/msg = message
@@ -213,6 +218,11 @@ GLOBAL_VAR_INIT(mobids, 1)
 	if(self_message)
 		hearers -= src
 	for(var/mob/M in hearers)
+		if(M.aghosted)
+			if(!isclient(M.aghosted))
+				continue
+			to_chat(M.aghosted, span_green("(BODY) ")+"[message]")
+			continue
 		M.show_message(message, MSG_AUDIBLE, deaf_message, MSG_VISUAL)
 		if(runechat_message && M.can_see_runechat(src) && M.can_hear())
 			M.create_chat_message(src, raw_message = runechat_message, spans = list("emote"))

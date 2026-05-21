@@ -39,7 +39,7 @@
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/consulo
 	cloak = /obj/item/clothing/cloak/templar/malumite
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants
 	belt = /obj/item/storage/belt/rogue/leather/black/soldier
 	beltl = /obj/item/flashlight/flare/torch/lantern

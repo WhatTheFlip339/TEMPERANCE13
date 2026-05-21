@@ -43,8 +43,6 @@
 	var/obj/item/clothing/C = parent
 	if(!ishuman(C.loc))
 		return
-	if(C.adjustable != CAN_CADJUST)
-		return
 	var/mob/living/carbon/human/H = C.loc
 	if(toggled_open)	//We're open, so we'll close
 		toggle_closed(C)
@@ -126,5 +124,3 @@
 	if(update_flags & UPD_MASK)
 		H.update_inv_wear_mask()
 		return
-
-

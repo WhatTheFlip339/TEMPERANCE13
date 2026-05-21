@@ -132,7 +132,7 @@
 	)
 
 	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
-	M.Stun(20)
+	M.Stun(TABLE_CRAWL_BONK_STUN)
 
 // Visuals here to blind when under table
 /datum/table_crawl_controller/proc/apply_visual()

@@ -62,12 +62,32 @@
 	var/is_downed = FALSE
 	var/legs_broken = FALSE
 
+	var/chomp_cd = 0
+	var/chomp_roll = 0
+
 	retreat_health = 0
 	attack_sound = list('sound/vo/mobs/vw/attack (1).ogg','sound/vo/mobs/vw/attack (2).ogg','sound/vo/mobs/vw/attack (3).ogg','sound/vo/mobs/vw/attack (4).ogg')
 
 	AIStatus = AI_OFF
 	can_have_ai = FALSE
 	ai_controller = /datum/ai_controller/wolf_undead
+
+/mob/living/simple_animal/hostile/retaliate/rogue/wolf_undead/AttackingTarget() //7+1d6 vs con to knock ppl down
+	. = ..()
+
+	if(. && prob(8) && iscarbon(target))
+		var/mob/living/carbon/C = target
+		if(world.time >= chomp_cd + 120 SECONDS) //they can do it Once basically
+			src.chomp_roll = STASTR + (rand(1,6))
+			if(src.chomp_roll > C.STACON)
+				C.Knockdown(20)
+				C.visible_message(span_danger("\The [src] chomps \the [C]'s legs, knocking them down!"))
+				to_chat(C, span_danger("\The [src] tugs you to the ground! You're winded!"))
+				C.adjustOxyLoss(10) //less punishing than zfall bc simplemob
+				C.emote("gasp")
+			else
+				C.visible_message(span_danger("\The [src] fails to drag \the [C] down!"))
+		src.chomp_cd = world.time //this goes here i think? ...sure
 
 /mob/living/simple_animal/hostile/retaliate/rogue/wolf_undead/Initialize()
 	. = ..()

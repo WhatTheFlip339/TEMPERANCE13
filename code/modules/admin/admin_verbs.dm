@@ -420,6 +420,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 			if(S && !M.IsKnockdown() && !M.IsStun() && !M.IsParalyzed()) // Wake them up unless they're asleep for another reason
 				M.remove_status_effect(S)
 				M.set_resting(FALSE, TRUE)
+			M.aghosted = null
 			M.density = initial(M.density)
 			M.invisibility = initial(M.invisibility)
 		else
@@ -443,6 +444,7 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 		if (aghost_toggle)
 			body.invisibility = INVISIBILITY_MAXIMUM
 			body.density = 0
+		body.aghosted = src
 		body.ghostize(TRUE, admin = TRUE)
 		if(body && !body.key)
 			body.key = "@[key]"	//Haaaaaaaack. But the people have spoken. If it breaks; blame adminbus

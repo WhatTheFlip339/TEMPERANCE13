@@ -78,7 +78,6 @@
 /datum/component/storage/Initialize(datum/component/storage/concrete/master)
 	if(!grid_box_size)
 		grid_box_size = get_grid_box_size()
-	RegisterSignal(parent, COMSIG_ITEM_EQUIPPED, PROC_REF(on_equipped))
 	RegisterSignal(parent, COMSIG_STORAGE_BLOCK_USER_TAKE, PROC_REF(should_block_user_take))
 	. = ..()
 	if(!.)
@@ -291,7 +290,7 @@
 	if(isitem(host))
 		var/obj/item/host_item = host
 		var/datum/component/storage/storage_internal = storing.GetComponent(/datum/component/storage)
-		if((storing.w_class >= host_item.w_class) && storage_internal && !allow_big_nesting)
+		if(!allow_big_nesting && (storing.w_class >= host_item.w_class) && storage_internal && !storage_internal.allow_nesting)
 			if(!stop_messages)
 				to_chat(user, span_warning("[host_item] cannot hold [storing] as it's a storage item of the same size!"))
 			return FALSE //To prevent the stacking of same sized storage items
@@ -380,11 +379,15 @@
 			return FALSE
 	return handle_item_insertion(attacking_item, FALSE, user, params = params, storage_click = storage_click)
 
-//This is basically literally just for backpacks.
 /datum/component/storage/proc/on_equipped(obj/item/source, mob/user, slot)
 	SIGNAL_HANDLER
-	if(user.active_storage == src && istype(source, /obj/item/storage/backpack/rogue/backpack))
-		close(user)
+
+	var/atom/parent_atom = parent
+	for(var/mob/living/living_viewer in can_see_contents())
+		if(!living_viewer.CanReach(parent_atom))
+			hide_from(living_viewer)
+	if(!worn_check_aggressive(parent, user, TRUE))
+		hide_from(user)
 
 /datum/component/storage/proc/worn_check(obj/item/storing, mob/user, no_message = FALSE)
 	. = TRUE

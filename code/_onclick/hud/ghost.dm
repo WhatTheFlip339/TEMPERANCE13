@@ -37,7 +37,7 @@
 		if(G.client)
 			if(istype(G, /mob/dead/observer/rogue/arcaneeye))
 				return
-			if(alert("Travel with the boatman?", "", "Yes", "No") == "Yes")
+			if(alert("Do you want to move on?", "", "Yes", "No") == "Yes")
 				if(G.mind)
 					var/datum/job/target_job = SSjob.GetJob(G.mind.assigned_role)
 					if(target_job)
