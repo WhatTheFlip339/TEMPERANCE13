@@ -42,7 +42,7 @@
 
 /datum/outfit/job/roguetown/warpriest/pre_equip(mob/living/carbon/human/H)
 	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/priest/warpriest
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	beltl = /obj/item/gun/ballistic/revolver/mercy
 	beltr = /obj/item/flashlight/flare/torch/lantern
 	armor = /obj/item/clothing/suit/roguetown/shirt/robe/warpriest

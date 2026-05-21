@@ -40,7 +40,7 @@
 
 /datum/outfit/job/roguetown/pafanto/pre_equip(mob/living/carbon/human/H)
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/half/iron/ziggurate
 	cloak = /obj/item/clothing/cloak/templar/malumite
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants

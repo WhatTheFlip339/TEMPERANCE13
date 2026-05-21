@@ -37,7 +37,7 @@
 
 /datum/outfit/job/roguetown/kaspafisto/pre_equip(mob/living/carbon/human/H)
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/heavy/coat
 	cloak = /obj/item/clothing/cloak/poncho
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants

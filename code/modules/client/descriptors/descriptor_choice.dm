@@ -321,22 +321,18 @@
 	/datum/mob_descriptor/prominent/custom/two
 
 #define PROMINENT_WILDKIN \
-	/datum/mob_descriptor/prominent/canine_features,\
-	/datum/mob_descriptor/prominent/feline_features,\
-	/datum/mob_descriptor/prominent/hyaenidae_features,\
-	/datum/mob_descriptor/prominent/equine_features,\
-	/datum/mob_descriptor/prominent/bovine_features,\
-	/datum/mob_descriptor/prominent/cervine_features,\
-	/datum/mob_descriptor/prominent/lapine_features,\
 	/datum/mob_descriptor/prominent/rodent_features,\
+	/datum/mob_descriptor/prominent/bovine_features,\
+	/datum/mob_descriptor/prominent/tigerish_features,\
+	/datum/mob_descriptor/prominent/lapine_features,\
+	/datum/mob_descriptor/prominent/feline_features,\
+	/datum/mob_descriptor/prominent/serpent_features,\
+	/datum/mob_descriptor/prominent/equine_features,\
+	/datum/mob_descriptor/prominent/caprine_features,\
 	/datum/mob_descriptor/prominent/primate_features,\
-	/datum/mob_descriptor/prominent/marsupial_features,\
-	/datum/mob_descriptor/prominent/lizard_features,\
 	/datum/mob_descriptor/prominent/avian_features,\
-	/datum/mob_descriptor/prominent/amphibian_features,\
-	/datum/mob_descriptor/prominent/insectoid_features,\
-	/datum/mob_descriptor/prominent/marine_features,\
-	/datum/mob_descriptor/prominent/vulpine_features
+	/datum/mob_descriptor/prominent/canine_features,\
+	/datum/mob_descriptor/prominent/porcine_features
 
 /datum/descriptor_choice/prominent_one
 	name = "Prominent #1"

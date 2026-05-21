@@ -42,4 +42,7 @@
 	for(var/mob/living/L in ghostless)
 		if(L.stat == CONSCIOUS) // To those conscious only. Slightly more expensive but subtle is not spammed
 			to_chat(L, "<i>[message]</i>")
+		if(L.aghosted)
+			if(isclient(L.aghosted))
+				to_chat(L.aghosted, span_green("(BODY) ") + "<i>[message]</i>")
 

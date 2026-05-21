@@ -38,7 +38,7 @@
 
 /datum/outfit/job/roguetown/voltigeur/pre_equip(mob/living/carbon/human/H)
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	armor = /obj/item/clothing/suit/roguetown/armor/brigandine
 	cloak = /obj/item/clothing/cloak/perserduntrenchcoat/voltigeur
 	pants = /obj/item/clothing/under/roguetown/trou/artipants

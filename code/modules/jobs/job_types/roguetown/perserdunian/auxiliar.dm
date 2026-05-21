@@ -37,7 +37,7 @@
 
 /datum/outfit/job/roguetown/auxiliarist/pre_equip(mob/living/carbon/human/H)
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord/leech
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	beltl = /obj/item/flashlight/flare/torch/lantern
 	id = /obj/item/roguekey/perserdun
 	armor = /obj/item/clothing/suit/roguetown/armor/brigandine/light

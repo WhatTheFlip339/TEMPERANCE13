@@ -160,3 +160,37 @@
 
 /mob/living/carbon/human/proc/CloseWings()
 	return
+
+/datum/emote/living/carbon/human/click
+	key = "click"
+	key_third_person = "clicks"
+	message = "emits a few clicks."
+	message_muffled = "makes a faint clicking noise."
+	emote_type = EMOTE_AUDIBLE
+
+/mob/living/carbon/human/verb/emote_click()
+	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Click"
+		set category = "Noises"
+	else
+		to_chat(usr, span_warning("Your tongue doesn't do that"))
+		return
+
+	emote("click", intentional = TRUE)
+
+/datum/emote/living/carbon/human/clickspin
+	key = "clickspin"
+	key_third_person = "clickspins"
+	message = "rapidly clicks."
+	message_muffled = "softly clatters."
+	emote_type = EMOTE_AUDIBLE
+
+/mob/living/carbon/human/verb/emote_clickspin()
+	if(istype(usr.getorganslot(ORGAN_SLOT_TONGUE), /obj/item/organ/tongue/construct))
+		set name = "Clickspin"
+		set category = "Noises"
+	else
+		to_chat(usr, span_warning("Your tongue doesn't do that"))
+		return
+
+	emote("clickspin", intentional = TRUE)

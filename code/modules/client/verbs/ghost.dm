@@ -18,10 +18,10 @@ GLOBAL_LIST_INIT(ghost_verbs, list(
 		mob.ghost_down()
 
 /client/proc/descend()
-	set name = "Journey to the Underworld"
+	set name = "Descend with the Fallen"
 	set category = "Spirit"
 
-	switch(alert("Descend to the Underworld?",,"Yes","No"))
+	switch(alert("Do you want to move on?",,"Yes","No"))
 		if("Yes")
 			if(istype(mob, /mob/living/carbon/spirit))
 				return

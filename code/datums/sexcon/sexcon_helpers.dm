@@ -172,16 +172,26 @@
 		playsound(get_turf(action_target), pick('modular/sound/masomoans/masomoan1.ogg', 'modular/sound/masomoans/masomoan2.ogg', 'modular/sound/masomoans/masomoan3.ogg', 'modular/sound/masomoans/masomoan4.ogg', 'modular/sound/masomoans/masomoan5.ogg', 'modular/sound/masomoans/masomoan6.ogg'), 70, TRUE, 1)
 		return
 	action_target.emote("scream", forced = TRUE)
+
+/mob/living/carbon/human/proc/can_reproduce_with(mob/living/carbon/human/partner)
+	var/my_demihuman = istype(dna.species, /datum/species/demihuman)
+	var/their_demihuman = istype(partner.dna.species, /datum/species/demihuman)
+	// Demihumans ONLY reproduce with other demihumans
+	if(my_demihuman || their_demihuman)
+		return (my_demihuman && their_demihuman)
+	return TRUE
 	
 /mob/living/carbon/human/proc/try_impregnate(mob/living/carbon/human/wife)
 	var/obj/item/organ/testicles/testes = getorganslot(ORGAN_SLOT_TESTICLES)
 	if(!testes)
 		return
-	var/obj/item/organ/vagina/vag = wife.getorganslot(ORGAN_SLOT_VAGINA)
-	if(!vag)
-		return
 	if(!is_virile())
 		return
+	if(!can_reproduce_with(wife))
+		return
+	if(wife.mpreg)
+		return
+	var/obj/item/organ/vagina/vag = wife.getorganslot(ORGAN_SLOT_VAGINA)
 	if(vag)
 		if(!wife.is_fertile())
 			return
@@ -198,9 +208,6 @@
 		if(wife.sexcon.knotted_status)
 			prob_for_impreg =  min(prob_for_impreg * 2, IMPREG_PROB_MAX)
 		if(prob(prob_for_impreg))
-			if(wife.mpreg)
-				to_chat(wife, span_love("I feel a surge of warmth inside me again..."))
-				return
 			to_chat(wife, span_love("I feel a strange surge of warmth inside me... Am I pregnant?.."))
 			wife.mpreg = TRUE
 		else

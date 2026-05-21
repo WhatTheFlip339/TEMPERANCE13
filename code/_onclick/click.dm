@@ -101,6 +101,10 @@
 	if(SEND_SIGNAL(src, COMSIG_MOB_CLICKON, A, params) & COMSIG_MOB_CANCEL_CLICKON)
 		return
 
+	if(modifiers["right"] && !modifiers["shift"] && !modifiers["alt"] && !modifiers["ctrl"])
+		if(try_special_attack(A, modifiers))
+			return
+
 	if(next_move > world.time)
 		return
 
@@ -184,12 +188,6 @@
 
 	if(incapacitated(ignore_restraints = 1))
 		return
-
-	if(using_object)
-		if(istype(using_object, /obj/item/gun/ballistic/heavy_mg) || using_object != A)
-			var/obj/item/gun/ballistic/heavy_mg/M = using_object
-			M.afterattack(A, src)
-			return 1
 
 	if(!atkswinging)
 		face_atom(A)
@@ -311,14 +309,14 @@
 						changeNext_move(CLICK_CD_RAPID)
 						if(get_dist(get_turf(src), T) <= used_intent.reach)
 							do_attack_animation(T, used_intent.animname, used_intent.masteritem, used_intent = src.used_intent)
+						var/adf = used_intent.clickcd
+						if(istype(rmb_intent, /datum/rmb_intent/aimed))
+							adf = round(adf * CLICK_CD_MOD_AIMED)
+						if(istype(rmb_intent, /datum/rmb_intent/swift))
+							adf = max(round(adf * CLICK_CD_MOD_SWIFT), CLICK_CD_INTENTCAP)
+						changeNext_move(adf)
 						if(W)
 							playsound(get_turf(src), pick(W.swingsound), 100, FALSE)
-							var/adf = used_intent.clickcd
-							if(istype(rmb_intent, /datum/rmb_intent/aimed))
-								adf = round(adf * CLICK_CD_MOD_AIMED)
-							if(istype(rmb_intent, /datum/rmb_intent/swift))
-								adf = max(round(adf * CLICK_CD_MOD_SWIFT), CLICK_CD_INTENTCAP)
-							changeNext_move(adf)
 						else
 							playsound(get_turf(src), used_intent.miss_sound, 100, FALSE)
 							if(used_intent.miss_text)
@@ -366,8 +364,6 @@
 //DOES NOT ACTUALLY KNOW IF YOU'RE RANGED, DO NoT CALL ON IT'S OWN
 /mob/proc/resolveRangedClick(atom/A,obj/item/W,params,used_hand)
 	if(!A)
-		return
-	if(W == /obj/item/gun/ballistic/heavy_mg) //heavymg is handled elsewhere
 		return
 	if(W)
 		W.afterattack(A,src,0,params) // 0: not Adjacent
@@ -589,7 +585,7 @@
 	return
 /atom/proc/ShiftClick(mob/user)
 	SEND_SIGNAL(src, COMSIG_CLICK_SHIFT, user)
-	if(user.client && user.client.eye == user || user.client.eye == user.loc)
+	if(user.client /*&& user.client.eye == user || user.client.eye == user.loc*/)
 		user.examinate(src)
 	return
 
@@ -672,13 +668,13 @@
 // Simple helper to face another atom, much nicer than byond's dir = get_dir(src,A) which is biased in some ugly ways
 /atom/proc/face_atom(atom/A, location, control, params)
 	if(!A)
-		return
+		return FALSE
 	if(!A.xyoverride)
 		if((!A || !x || !y || !A.x || !A.y))
-			return
+			return FALSE
 	var/atom/holder = A.face_me(location, control, params)
 	if(!holder)
-		return
+		return FALSE
 	var/dx = holder.x - x
 	var/dy = holder.y - y
 	if(!dx && !dy) // Wall items are graphically shifted but on the floor
@@ -690,7 +686,7 @@
 			setDir(EAST)
 		else if(holder.pixel_x < -16)
 			setDir(WEST)
-		return
+		return TRUE
 
 	if(abs(dx) < abs(dy))
 		if(dy > 0)
@@ -702,18 +698,37 @@
 			setDir(EAST)
 		else
 			setDir(WEST)
+	return TRUE
 
 /mob/face_atom(atom/A)
 	if(!canface())
 		return FALSE
-	..()
+	return ..()
 
 /mob/living/face_atom(atom/A)
-	var/olddir = dir
-	..()
-	if(dir != olddir)
+	var/old_dir = dir
+	. = ..()
+	if(!.)
+		return
+	if(dir != old_dir)
 		last_dir_change = world.time
 		sprinted_tiles = 0
+		if(length(buckled_mobs))
+			face_atom_buckled_mobs(A)
+
+/mob/living/proc/face_atom_buckled_mobs(atom/A)
+	for(var/mob/mob in buckled_mobs)
+		mob.setDir(dir)
+	var/datum/component/riding/riding_datum = LoadComponent(/datum/component/riding)
+	riding_datum.handle_vehicle_layer()
+	riding_datum.handle_vehicle_offsets()
+
+/mob/living/carbon/human/face_atom_buckled_mobs(atom/A)
+	for(var/mob/mob in buckled_mobs)
+		mob.setDir(dir)
+	var/datum/component/riding/human/riding_datum = LoadComponent(/datum/component/riding/human)
+	riding_datum.handle_vehicle_layer()
+	riding_datum.handle_vehicle_offsets()
 
 //debug
 /atom/movable/screen/proc/scale_to(x1,y1)
@@ -823,7 +838,10 @@
 		used_intent.rmb_ranged(A, src) //get the message from the intent
 	changeNext_move(CLICK_CD_RAPID)
 	if(isturf(A.loc))
-		face_atom(A)
+		if(buckled)
+			buckled.face_atom(A)
+		else
+			face_atom(A)
 
 /mob/proc/TargetMob(mob/target)
 	if(ismob(target))
@@ -871,19 +889,23 @@
 	if(stat)
 		return
 	if(get_dist(src, A) <= 2)
-		if(T == loc)
+		if(A.loc == src)
+			A.ShiftRightClick(src)
+		else if(T == loc)
 			look_up()
 		else
 			if(istransparentturf(T))
-				look_down(T)
-			else
-				look_further(T)
+				var/turf/MT = get_turf(src)
+				if((T in view(MT))) // if we got line of sight, allow player to look down
+					look_down(T)
+					return
+			look_further(T)
 	else
 		look_further(T)
 
 /atom/proc/ShiftRightClick(mob/user)
 	SEND_SIGNAL(src, COMSIG_CLICK_RIGHT_SHIFT, user)
-	if(user.client && user.client.eye == user || user.client.eye == user.loc)
+	if(user.client /*&& user.client.eye == user || user.client.eye == user.loc*/)
 		user.examinate(src)
 
 /mob/proc/addtemptarget()
@@ -898,3 +920,45 @@
 	tempfixeye = TRUE
 	for(var/atom/movable/screen/eye_intent/eyet in hud_used.static_inventory)
 		eyet.update_icon(src) //Update eye icon
+
+/// A special proc to fire rmb_intents *before* checking click cooldown, since some intents (guard) should be used regardless of CD.
+/mob/proc/try_special_attack(atom/A, list/modifiers)
+	return FALSE
+
+/mob/living/try_special_attack(atom/A, list/modifiers)
+	if(!rmb_intent || !cmode || istype(A, /obj/item/clothing) || istype(A, /obj/item/quiver) || istype(A, /obj/item/storage))
+		return FALSE
+
+
+	if(rmb_intent?.adjacency && !Adjacent(A))
+		return FALSE
+
+	rmb_intent.special_attack(src, ismob(A) ? A : get_foe_from_turf(get_turf(A)))
+	return TRUE
+
+/// Used for "directional" style rmb attacks on a turf, prioritizing standing targets
+/mob/living/proc/get_foe_from_turf(turf/T)
+	if(!istype(T))
+		return
+
+	var/list/mob/living/foes = list()
+	for(var/mob/living/foe_in_turf in T)
+		if(foe_in_turf == src)
+			continue
+
+		var/foe_prio = rand(4, 8)
+		if(foe_in_turf.mobility_flags & MOBILITY_STAND)
+			foe_prio += 10
+		else if(foe_in_turf.stat != CONSCIOUS)
+			foe_prio = 2
+		else if(foe_in_turf.surrendering)
+			foe_prio = -5
+
+		foes[foe_in_turf] = foe_prio
+
+	if(!foes.len)
+		return null
+
+	if(foes.len > 1)
+		sortTim(foes, cmp = /proc/cmp_numeric_dsc, associative = TRUE)
+	return foes[1]

@@ -5,7 +5,7 @@
 	faction = "Station"
 	total_positions = 1
 	spawn_positions = 1
-	allowed_races = RACES_TEMPERANCE_NO_BM
+	allowed_races = RACES_CONSCRIPT
 	allowed_sexes = list(MALE, FEMALE)
 	allowed_ages = list(AGE_ADULT, AGE_MIDDLEAGED)
 	selection_color = JCOLOR_PERSERDUN
@@ -39,7 +39,7 @@
 /datum/outfit/job/roguetown/grandmaster/pre_equip(mob/living/carbon/human/H)
 	H.verbs += /mob/living/carbon/human/proc/grandmaster_raid
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	armor = /obj/item/clothing/suit/roguetown/armor/leather/grandmaster
 	pants = /obj/item/clothing/under/roguetown/trou/artipants
 	head = /obj/item/clothing/head/roguetown/helmet/leather/grandmaster
@@ -57,12 +57,14 @@
 	backpack_contents = list(
 		/obj/item/ammo_box/speedloader/magnum = 6,
 		/obj/item/storage/belt/rogue/pouch/coins/rich,
+		/obj/item/rogueweapon/whip,
 	)
 	H.adjust_skillrank(/datum/skill/combat/wrestling, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/craft/crafting, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/unarmed, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/combat/knives, 2, TRUE)
+	H.adjust_skillrank(/datum/skill/combat/whipsflails, 4, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/swimming, 2, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/climbing, 3, TRUE)
 	H.adjust_skillrank(/datum/skill/misc/athletics, 3, TRUE)

@@ -3,7 +3,7 @@
 /mob/living/simple_animal/hostile/retaliate/rogue/wolf
 	icon = 'icons/roguetown/mob/monster/vol.dmi'
 	name = "wolf"
-	desc = "A snarling beast of mangy fur and yellowed teeth. Volves are known to attack hapless travelers in the deep forests when prey is scarce."
+	desc = "A snarling beast of mangy fur and yellowed teeth. Wolves are known to attack aggressively as the war has made prey scarce."
 	icon_state = "vv"
 	icon_living = "vv"
 	icon_dead = "vvd"
@@ -36,8 +36,8 @@
 	mob_biotypes = MOB_ORGANIC|MOB_BEAST
 	health = WOLF_HEALTH
 	maxHealth = WOLF_HEALTH
-	melee_damage_lower = 19
-	melee_damage_upper = 29
+	melee_damage_lower = 22
+	melee_damage_upper = 32
 	vision_range = 7
 	aggro_vision_range = 9
 	environment_smash = ENVIRONMENT_SMASH_NONE
@@ -53,7 +53,7 @@
 	pooptype = null
 	STACON = 7
 	STASTR = 7
-	STASPD = 12
+	STASPD = 13
 	simple_detect_bonus = 20
 	deaggroprob = 0
 	defprob = 40
@@ -66,7 +66,9 @@
 //	stat_attack = UNCONSCIOUS
 	remains_type = /obj/effect/decal/remains/wolf
 	eat_forever = TRUE
-	
+
+	var/chomp_cd = 0
+	var/chomp_roll = 0
 
 //new ai, old ai off
 	AIStatus = AI_OFF
@@ -74,9 +76,26 @@
 	ai_controller = /datum/ai_controller/volf
 	melee_cooldown = WOLF_ATTACK_SPEED
 
+/mob/living/simple_animal/hostile/retaliate/rogue/wolf/AttackingTarget() //7+1d6 vs con to knock ppl down
+	. = ..()
+
+	if(. && prob(8) && iscarbon(target))    //8% probability every attack for it to roll the knock down
+		var/mob/living/carbon/C = target
+		if(world.time >= chomp_cd + 120 SECONDS) //they can do it Once basically
+			src.chomp_roll = STASTR + (rand(0,6))
+			if(src.chomp_roll > C.STACON)
+				C.Knockdown(20)
+				C.visible_message(span_danger("\The [src] chomps \the [C]'s legs, knocking them down!"))
+				to_chat(C, span_danger("\The [src] tugs you to the ground! You're winded!"))
+				C.adjustOxyLoss(10) //less punishing than zfall bc simplemob
+				C.emote("gasp")
+			else
+				C.visible_message(span_danger("\The [src] fails to drag \the [C] down!"))
+		src.chomp_cd = world.time //this goes here i think? ...sure
+
 /obj/effect/decal/remains/wolf
 	name = "remains"
-	desc = "Whether by starvation, disease, inter-pack conflict, or an unlucky kick from a saiga, this volf has died."
+	desc = "Whether by starvation, disease, inter-pack conflict, or an unlucky kick from a saiga, this wolf has died."
 	gender = PLURAL
 	icon_state = "bones"
 	icon = 'icons/roguetown/mob/monster/vol.dmi'

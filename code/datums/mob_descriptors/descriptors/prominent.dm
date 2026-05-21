@@ -279,66 +279,50 @@
 	verbage = "%HAVE%"
 	prefix = "a"
 
-/datum/mob_descriptor/prominent/canine_features
-	name = "Canine Features"
-	verbage = "%HAVE%"
-
-/datum/mob_descriptor/prominent/feline_features
-	name = "Feline Features"
-	verbage = "%HAVE%"
-
-/datum/mob_descriptor/prominent/hyaenidae_features
-	name = "Hyaenidae Features"
-	verbage = "%HAVE%"
-
-/datum/mob_descriptor/prominent/equine_features
-	name = "Equine Features"
+/datum/mob_descriptor/prominent/rodent_features
+	name = "Rodent Features"
 	verbage = "%HAVE%"
 
 /datum/mob_descriptor/prominent/bovine_features
 	name = "Bovine Features"
 	verbage = "%HAVE%"
 
-/datum/mob_descriptor/prominent/cervine_features
-	name = "Cervine Features"
+/datum/mob_descriptor/prominent/tigerish_features
+	name = "Tigerish Features"
 	verbage = "%HAVE%"
 
 /datum/mob_descriptor/prominent/lapine_features
 	name = "Lapine Features"
 	verbage = "%HAVE%"
 
-/datum/mob_descriptor/prominent/rodent_features
-	name = "Rodent Features"
+/datum/mob_descriptor/prominent/feline_features
+	name = "Feline Features"
+	verbage = "%HAVE%"
+
+/datum/mob_descriptor/prominent/serpent_features
+	name = "Serpent Features"
+	verbage = "%HAVE%"
+
+/datum/mob_descriptor/prominent/equine_features
+	name = "Equine Features"
+	verbage = "%HAVE%"
+
+/datum/mob_descriptor/prominent/caprine_features
+	name = "Caprine Features"
 	verbage = "%HAVE%"
 
 /datum/mob_descriptor/prominent/primate_features
 	name = "Primate Features"
 	verbage = "%HAVE%"
 
-/datum/mob_descriptor/prominent/marsupial_features
-	name = "Marsupial Features"
-	verbage = "%HAVE%"
-
-/datum/mob_descriptor/prominent/lizard_features
-	name = "Lizard Features"
-	verbage = "%HAVE%"
-
 /datum/mob_descriptor/prominent/avian_features
 	name = "Avian Features"
 	verbage = "%HAVE%"
 
-/datum/mob_descriptor/prominent/amphibian_features
-	name = "Amphibian Features"
+/datum/mob_descriptor/prominent/canine_features
+	name = "Canine Features"
 	verbage = "%HAVE%"
 
-/datum/mob_descriptor/prominent/insectoid_features
-	name = "Instectoid Features"
-	verbage = "%HAVE%"
-
-/datum/mob_descriptor/prominent/marine_features
-	name = "Marine Features"
-	verbage = "%HAVE%"
-
-/datum/mob_descriptor/prominent/vulpine_features
-	name = "Vulpine Features"
+/datum/mob_descriptor/prominent/porcine_features
+	name = "Porcine Features"
 	verbage = "%HAVE%"

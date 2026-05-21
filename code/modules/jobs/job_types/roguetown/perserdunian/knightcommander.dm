@@ -36,7 +36,7 @@
 
 /datum/outfit/job/roguetown/knightcommander/pre_equip(mob/living/carbon/human/H)
 	shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/lord
-	shoes = /obj/item/clothing/shoes/roguetown/boots
+	shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 	beltl = /obj/item/flashlight/flare/torch/lantern
 	armor = /obj/item/clothing/suit/roguetown/armor/plate/hauberk
 	cloak = /obj/item/clothing/cloak/perserduntabard
