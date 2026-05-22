@@ -133,6 +133,9 @@
 
 	playsound(S, "genblunt", 100, TRUE)
 	M.Stun(50)
+	M.resting = TRUE
+	state = TABLECRAWL_UNDER
+	apply_visual()
 
 // Visuals here to blind when under table
 /datum/table_crawl_controller/proc/apply_visual()
