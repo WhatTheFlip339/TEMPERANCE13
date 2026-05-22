@@ -131,7 +131,7 @@
 		span_warning("You bump your head!")
 	)
 
-	playsound(S, "genblunt", TABLE_CRAWL_BONK_SOUND_VOLUME, TRUE)
+	playsound(S, "genblunt", 100, TRUE)
 	M.Stun(50)
 
 // Visuals here to blind when under table
