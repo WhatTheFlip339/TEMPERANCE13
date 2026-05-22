@@ -37,8 +37,23 @@
 	blade_dulling = DULLING_BASHCHOP
 	debris = list(/obj/item/grown/log/tree/small = 1)
 
-/obj/structure/table/examine(mob/user)
+/obj/structure/table/examine(mob/user)	//To see if anyone is under a table
 	. = ..()
+
+	var/mob/living/carbon/human/H = user
+	if(!istype(H))
+		return
+	if(get_dist(H, src) != 1)
+		return
+	if(!H.resting)
+		return
+	var/turf/T = get_turf(src)
+	if(!T)
+		return
+	for(var/mob/living/carbon/human/M in T)
+		if(M.table_crawl?.state == TABLECRAWL_UNDER)
+			. += span_warning("You notice movement beneath the table... someone is hiding underneath!")
+			break
 //	. += deconstruction_hints(user)
 
 /obj/structure/table/proc/deconstruction_hints(mob/user)
@@ -498,23 +513,9 @@
 	attacked_sound = list('sound/combat/hits/onwood/woodimpact (1).ogg','sound/combat/hits/onwood/woodimpact (2).ogg')
 	blade_dulling = DULLING_BASHCHOP
 
-/obj/structure/rack/examine(mob/user)	//to see if people are crawling under a table
+/obj/structure/rack/examine(mob/user)	
 	. = ..()
 
-	var/mob/living/carbon/human/H = user
-	if(!istype(H))
-		return
-	if(get_dist(H, src) != 1)
-		return
-	if(!H.resting)
-		return
-	var/turf/T = get_turf(src)
-	if(!T)
-		return
-	for(var/mob/living/carbon/human/M in T)
-		if(M.table_crawl?.state == TABLECRAWL_UNDER)
-			. += span_warning("You notice movement beneath the table... someone is hiding underneath!")
-			break
 
 /obj/structure/rack/CanPass(atom/movable/mover, turf/target)
 	if(src.density == 0) //Because broken racks -Agouri |TODO: SPRITE!|
