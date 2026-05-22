@@ -444,7 +444,13 @@ GLOBAL_PROTECT(admin_verbs_hideable)
 		if (aghost_toggle)
 			body.invisibility = INVISIBILITY_MAXIMUM
 			body.density = 0
-		body.aghosted = src
+
+		// Clear previous aghost body if one exists
+		if(src.current_aghost_body)
+			src.current_aghost_body.invisibility = initial(src.current_aghost_body.invisibility)
+			src.current_aghost_body.density = initial(src.current_aghost_body.density)
+		//set newest aghost body
+		src.current_aghost_body = body
 		body.ghostize(TRUE, admin = TRUE)
 		if(body && !body.key)
 			body.key = "@[key]"	//Haaaaaaaack. But the people have spoken. If it breaks; blame adminbus
