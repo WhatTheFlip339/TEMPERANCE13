@@ -355,7 +355,6 @@ GLOBAL_LIST_INIT(department_radio_keys, list(
 			if(C.current_aghost_body == src)
 				to_chat(C, span_green("(BODY) ") + "[message]")
 				break
-	if(!client)
 		return
 	var/deaf_message
 	var/deaf_type
