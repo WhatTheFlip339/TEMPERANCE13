@@ -221,10 +221,14 @@ GLOBAL_VAR_INIT(mobids, 1)
 	if(self_message)
 		hearers -= src
 	for(var/mob/M in hearers)
+		var/found_aghost = FALSE
 		for(var/client/C in GLOB.clients)
 			if(C.current_aghost_body == M)
 				to_chat(C, span_green("(BODY) ") + "[message]")
-				continue
+				found_aghost = TRUE
+				break
+		if(found_aghost)
+			continue
 		M.show_message(message, MSG_AUDIBLE, deaf_message, MSG_VISUAL)
 		if(runechat_message && M.can_see_runechat(src) && M.can_hear())
 			M.create_chat_message(src, raw_message = runechat_message, spans = list("emote"))
